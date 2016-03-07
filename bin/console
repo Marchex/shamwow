@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
+require 'rubygems'
 require "shamwow"
+require 'data_mapper'
+require 'dm-migrations'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -13,4 +16,20 @@ require "shamwow"
 wow = Shamwow::Db.new
 
 wow.foo("foo")
-wow.bar
+#wow.bar
+DataMapper::Logger.new($stdout, :debug)
+DataMapper.setup(:default, 'postgres://jcarter@localhost/shamwow')
+
+class ChefNode
+  include DataMapper::Resource
+
+  property :id,               Serial
+  property :hostname,         String
+  property :os,               String
+  property :chefver,          String
+  property :firstseen,        DateTime
+  property :lastseen,         DateTime
+end
+
+DataMapper.finalize
+DataMapper.auto_migrate!
