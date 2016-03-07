@@ -1,25 +1,26 @@
 require "shamwow/version"
+require 'shamwow/models/chefnode'
 require 'pg'
 
 module Shamwow
   class Db
 
-      puts "hello"
+      def initialize(dm_conn, debug)
+        DataMapper::Logger.new($stdout, :debug) if debug
+        DataMapper.setup(:default, dm_conn)
 
-      def foo(a)
-        puts "hello init #{a}"
+        DataMapper.finalize
+
       end
 
-      def bar
-        conn = PG.connect( dbname: 'shamwow' )
-        conn.exec( "SELECT * FROM pg_stat_activity" ) do |result|
-          puts "     PID | User             | Query"
-          result.each do |row|
-            puts " %7d | %-16s | %s " % row.values_at('pid', 'usename', 'query')
-          end
-        end
+
+      def bootstrap_db
+        DataMapper.auto_migrate!
       end
 
+      def create_chefnode node
+        ChefNode.first_or_create({ :hostname => node[:hostname]}, node)
+      end
   end
 end
 

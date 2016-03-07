@@ -13,23 +13,14 @@ require 'dm-migrations'
 # require "pry"
 # Pry.start
 
-wow = Shamwow::Db.new
+wow = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
 
-wow.foo("foo")
-#wow.bar
-DataMapper::Logger.new($stdout, :debug)
-DataMapper.setup(:default, 'postgres://jcarter@localhost/shamwow')
 
-class ChefNode
-  include DataMapper::Resource
+wow.create_chefnode ({
+  :hostname => 'nexus1.marchex.com',
+      :os => 'ubuntu',
+      :chefver => '12.6.0',
+      :firstseen => Time.now,
+  :lastseen => Time.now
+})
 
-  property :id,               Serial
-  property :hostname,         String
-  property :os,               String
-  property :chefver,          String
-  property :firstseen,        DateTime
-  property :lastseen,         DateTime
-end
-
-DataMapper.finalize
-DataMapper.auto_migrate!
