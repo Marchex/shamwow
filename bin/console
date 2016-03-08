@@ -5,6 +5,7 @@ require 'rubygems'
 require "shamwow"
 require 'data_mapper'
 require 'dm-migrations'
+require 'net/ssh/multi'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -13,14 +14,29 @@ require 'dm-migrations'
 # require "pry"
 # Pry.start
 
-wow = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
+#wow = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
 
 
-wow.create_chefnode ({
-  :hostname => 'nexus1.marchex.com',
-      :os => 'ubuntu',
-      :chefver => '12.6.0',
-      :firstseen => Time.now,
-  :lastseen => Time.now
-})
+session = Net::SSH::Multi::Session.new
+session.on_error = :ignore
+
+text = File.open 'data/cx-hosts_sev5.out', 'r'
+text.each_line do |line|
+  session.use "jcarter@#{line.strip}"
+end
+
+
+session.exec "hostname -f" do |ch, stream, data|
+  puts "[#{ch[:host]} : #{stream}] #{data}"
+end
+
+session.loop
+
+# wow.create_chefnode ({
+#   :hostname => 'nexus1.marchex.com',
+#       :os => 'ubuntu',
+#       :chefver => '12.6.0',
+#       :firstseen => Time.now,
+#   :lastseen => Time.now
+# })
 
