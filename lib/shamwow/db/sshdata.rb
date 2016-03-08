@@ -1,7 +1,7 @@
 require 'data_mapper'
 
 module Shamwow
-  class Node
+  class SshData
     include DataMapper::Resource
 
     property :id,               Serial

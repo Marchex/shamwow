@@ -2,7 +2,6 @@
 require 'bundler/setup'
 require 'rubygems'
 require 'shamwow'
-require 'net/ssh/multi'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -11,32 +10,4 @@ require 'net/ssh/multi'
 # require "pry"
 # Pry.start
 
-wow = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
-#wow.bootstrap_db
-
-session = Net::SSH::Multi::Session.new
-session.on_error = :ignore
-
-#text = File.open 'data/cx-hosts_sev5.out', 'r'
-#text.each_line do |line|
-#  session.use "jcarter@#{line.strip}"
-#end
-session.use 'jcarter@bumper.sea.marchex.com'
-session.use 'jcarter@vmbuilder1.sea1.marchex.com'
-session.use 'jcarter@vmbuilder2.sea1.marchex.com'
-
-session.exec 'chef-client --version' do |ch, stream, data|
-  puts "[#{ch[:host]} : #{stream}] #{data}"
-  wow.create_node ({
-      :hostname => ch[:host],
-      :os => 'ubuntu',
-      :chefver => data,
-      :firstseen => Time.now,
-      :lastseen => Time.now
-  })
-end
-
-session.loop
-
-
-
+Shamwow
