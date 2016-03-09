@@ -30,12 +30,15 @@ module Shamwow
 
     def save
       @hosts.each_value do |o|
+        o.attributes=  { :lastseen => Time.now }
         o.save
       end
     end
 
     def _load_sshdata(host)
       o = SshData.first_or_new({:hostname => host})
+      o.firstseen.nil? && o.attributes= { :firstseen => Time.now }
+      o.lastseen.nil? && o.attributes=  { :lastseen => Time.now }
       @hosts["#{host}"] = o
 
     end
@@ -43,17 +46,19 @@ module Shamwow
     def _define_execs
       @session.exec 'chef-client --version' do |ch, stream, data|
         puts "[#{ch[:host]} : #{stream}] #{data}"
-        _parse_chef_client ch[:host], data
+        begin
+          _parse_chef_client ch[:host], data
+        rescue => e
+          puts "------#{e.message}"
+        end
       end
 
       @session.exec 'cat /etc/lsb-release' do |ch, stream, data|
-        puts "[#{ch[:host]} : #{stream}] #{data}"
         begin
           _parse_lsb_release ch[:host], data
         rescue => e
           puts "------#{e.message}"
         end
-
       end
 
     end

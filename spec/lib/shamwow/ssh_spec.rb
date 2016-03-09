@@ -9,7 +9,17 @@ describe 'Ssh' do
     expect(sshdata).to receive(:attributes=).with({:os=>"Ubuntu 12.04.5 LTS"})
     o = Shamwow::Ssh.new
     o.add_host('foo')
-    o._parse_lsb_release('foo', 'DISTRIB_DESCRIPTION="Ubuntu 12.04.5 LTS"')
+    o._parse_lsb_release('foo', 'DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=12.04
+DISTRIB_CODENAME=precise
+DISTRIB_DESCRIPTION="Ubuntu 12.04.5 LTS"')
   end
 
+  it 'should catch errors parsing lsb release' do
+    sshdata = instance_double("Shamwow::SshData", :hostname => 'foo')
+    allow(Shamwow::SshData).to receive(:first_or_new) { sshdata }
+    o = Shamwow::Ssh.new
+    o.add_host('foo')
+    expect { o._parse_lsb_release('foo', '') }.to raise_error(NoMethodError)
+  end
 end
