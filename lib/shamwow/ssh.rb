@@ -37,7 +37,6 @@ module Shamwow
     def _load_sshdata(host)
       o = SshData.first_or_new({:hostname => host})
       @hosts["#{host}"] = o
-      puts "#{host}---#{o}" if @debug
 
     end
 
@@ -49,7 +48,12 @@ module Shamwow
 
       @session.exec 'cat /etc/lsb-release' do |ch, stream, data|
         puts "[#{ch[:host]} : #{stream}] #{data}"
-        _parse_lsb_release ch[:host], data
+        begin
+          _parse_lsb_release ch[:host], data
+        rescue => e
+          puts "------#{e.message}"
+        end
+
       end
 
     end
@@ -60,8 +64,10 @@ module Shamwow
       o.attributes = { :chefver => ver }
     end
 
+
     def _parse_lsb_release(host, data)
-      ver = data.split('=')[1].strip().gsub! /"/, ''
+      ver = data.match(/DISTRIB_DESCRIPTION=(.*)/)[1]
+      ver = ver.strip().gsub! /"/, ''
       o = @hosts["#{host}"]
       o.attributes = { :os => ver }
     end
