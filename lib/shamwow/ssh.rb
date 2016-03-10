@@ -20,8 +20,8 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 50
-      @session.via 'vmbuilder1.sea1.marchex.com', 'jcarter'
+      @session.concurrent_connections = 400
+      #@session.via 'vmbuilder1.sea1.marchex.com', 'jcarter'
       @hosts = { }
       @debug = 1
     end
@@ -30,7 +30,7 @@ module Shamwow
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use "jcarter@#{host}", :timeout => 10
+      @session.use "jcarter@#{host}", :timeout => 30
     end
 
     def count_hosts
