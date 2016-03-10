@@ -1,13 +1,27 @@
 require 'net/ssh/multi'
 require 'shamwow/db'
+require 'net/ssh/gateway'
 
 
 module Shamwow
   class Ssh
 
     def initialize
+      handler = Proc.new do |server|
+        server[:connection_attempts] ||= 0
+        if server[:connection_attempts] < 0
+          server[:connection_attempts] += 1
+          throw :go, :retry
+        else
+          puts "ERROR: #{server.to_s} -- #{$ERROR_INFO}"
+          throw :go
+        end
+      end
       @session = Net::SSH::Multi::Session.new
-      @session.on_error = :ignore
+      @session.on_error = handler
+
+      @session.concurrent_connections = 50
+      @session.via 'vmbuilder1.sea1.marchex.com', 'jcarter'
       @hosts = { }
       @debug = 1
     end
@@ -16,7 +30,7 @@ module Shamwow
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use "jcarter@#{host}"
+      @session.use "jcarter@#{host}", :timeout => 10
     end
 
     def count_hosts
@@ -25,7 +39,11 @@ module Shamwow
 
     def execute
       _define_execs
-      @session.loop
+      block = Proc.new do |c|
+        c.busy?
+      end
+      @session.loop(15, &block)
+
     end
 
     def save

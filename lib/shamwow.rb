@@ -4,7 +4,17 @@ require 'shamwow/version'
 
 
 module Shamwow
-  testlist = ['bumper.sea.marchex.com','vmbuilder1.sea1.marchex.com', 'vmbuilder2.sea1.marchex.com']
+  testlist = []
+  #testlist = ['bumper.sea.marchex.com','vmbuilder1.sea1.marchex.com', 'vmbuilder2.sea1.marchex.com']
+
+  fh = File.open 'data/cx-hosts.out', 'r'
+  fh.each_line do |line|
+    #next if line.match(/som1/)
+    #next if line.match(/phl/)
+    #next if line.match(/syd/)
+    testlist.push(line.strip)
+  end
+
 
   db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
   #db.bootstrap_db
