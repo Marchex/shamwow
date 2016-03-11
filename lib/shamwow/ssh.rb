@@ -84,27 +84,6 @@ module Shamwow
         end
       end
 
-      # @session.exec 'cat /etc/lsb-release' do |ch, stream, data|
-      #   unless data.match(/^\s*$/) || stream.match(/stderr/)
-      #     begin
-      #       _parse_lsb_release ch[:host], data
-      #     rescue => e
-      #       #puts "------#{e.message}"
-      #     end
-      #   end
-      # end
-      #
-      # @session.exec 'cat /etc/redhat-release'  do |ch, stream, data|
-      #   unless stream.match(/stderr/)
-      #     puts "[#{ch[:host]} : #{stream}] #{data}"
-      #     begin
-      #       _parse_redhat_release ch[:host], data
-      #     rescue => e
-      #       puts "------#{e.message}"
-      #     end
-      #   end
-      # end
-
       @session.exec 'cat /etc/issue'  do |ch, stream, data|
         unless stream.match(/stderr/)
           begin
@@ -119,17 +98,6 @@ module Shamwow
     def _parse_chef_client(host, data)
       ver = (data.split " ")[1].strip
       _save_ssh_data(host, { :chefver => ver, :chefver_polltime => Time.now })
-    end
-
-
-    def _parse_lsb_release(host, data)
-      ver = data.match(/DISTRIB_DESCRIPTION=(.*)/)[1]
-      ver = ver.gsub(/"/, '').strip
-      _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
-    end
-
-    def _parse_redhat_release(host, data)
-      _save_ssh_data(host, { :os => data, :os_polltime => Time.now })
     end
 
     def _parse_issue(host, data)
