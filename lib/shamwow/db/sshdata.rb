@@ -8,11 +8,11 @@ module Shamwow
     property :id,               Serial
     property :hostname,         String
     property :os,               String
+    property :os_polltime,      DateTime
     property :chefver,          String
-    property :firstseen,        DateTime
-    property :lastseen,         DateTime
+    property :chefver_polltime, DateTime
 
-    attr_reader :firstseen
-    attr_reader :lastseen
+    attr_reader :os_polltime
+    attr_reader :chefver_polltime
   end
 end

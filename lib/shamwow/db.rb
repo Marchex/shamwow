@@ -7,7 +7,7 @@ module Shamwow
   class Db
 
     def initialize(dm_conn, debug)
-      DataMapper::Logger.new($stdout, :debug) if debug
+      #DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, dm_conn)
       DataMapper.finalize
     end
@@ -28,11 +28,3 @@ module Shamwow
 
   end
 end
-
-# db.create_node ({
-#     :hostname => ch[:host],
-#     :os => 'ubuntu',
-#     :chefver => data,
-#     :firstseen => Time.now,
-#     :lastseen => Time.now
-# })

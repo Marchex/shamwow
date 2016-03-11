@@ -8,8 +8,7 @@ describe 'Ssh' do
     # Arrange
     sshdata = instance_double("Shamwow::SshData", :hostname => 'foo')
     allow(Shamwow::SshData).to receive(:first_or_new) { sshdata }
-    allow(sshdata).to receive(:firstseen)
-    allow(sshdata).to receive(:lastseen)
+    allow(sshdata).to receive(:os_pulltime)
     allow(sshdata).to receive(:attributes=).with(any_args)
     o = Shamwow::Ssh.new
     o.add_host('foo')
@@ -29,8 +28,7 @@ DISTRIB_DESCRIPTION="Ubuntu 12.04.5 LTS"')
     # Arrange
     sshdata = instance_double("Shamwow::SshData", :hostname => 'foo')
     allow(Shamwow::SshData).to receive(:first_or_new) { sshdata }
-    allow(sshdata).to receive(:firstseen)
-    allow(sshdata).to receive(:lastseen)
+    allow(sshdata).to receive(:os_pulltime)
     allow(sshdata).to receive(:attributes=).with(any_args)
     o = Shamwow::Ssh.new
     o.add_host('foo')

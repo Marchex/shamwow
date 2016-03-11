@@ -57,15 +57,12 @@ module Shamwow
 
     def save
       @hosts.each_value do |o|
-        #o.attributes=  { :lastseen => Time.now }
         o.save
       end
     end
 
     def _load_sshdata(host)
       o = SshData.first_or_new({:hostname => host})
-      o.firstseen.nil? && o.attributes= { :firstseen => Time.now }
-      o.lastseen.nil? && o.attributes=  { :lastseen => Time.now }
       @hosts["#{host}"] = o
 
     end
@@ -97,19 +94,21 @@ module Shamwow
 
     def _parse_chef_client(host, data)
       ver = (data.split " ")[1].strip
-      o = @hosts["#{host}"]
-      o.attributes = { :chefver => ver, :lastseen => Time.now }
-      o.save
+      _save_ssh_data(host, { :chefver => ver, :chefver_polltime => Time.now })
     end
 
 
     def _parse_lsb_release(host, data)
       ver = data.match(/DISTRIB_DESCRIPTION=(.*)/)[1]
       ver = ver.strip().gsub! /"/, ''
-      o = @hosts["#{host}"]
-      o.attributes = { :os => ver, :lastseen => Time.now }
-      o.save
+      _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
+
     end
 
+    def _save_ssh_data(host, attributes)
+      o = @hosts["#{host}"]
+      o.attributes = attributes
+      o.save
+    end
   end
 end
