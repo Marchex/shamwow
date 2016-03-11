@@ -8,7 +8,7 @@ module Shamwow
   class Db
 
     def initialize(dm_conn, debug)
-      DataMapper::Logger.new($stdout, :debug) if debug
+      #DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, dm_conn)
       DataMapper.finalize
     end

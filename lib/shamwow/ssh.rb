@@ -76,7 +76,6 @@ module Shamwow
       @session.exec 'chef-client --version' do |ch, stream, data|
           unless data.match(/^\s*$/) || data.match(/^ffi/)
 
-          #puts "[#{ch[:host]} : #{stream}] #{data}"
           begin
             _parse_chef_client ch[:host], data
           rescue => e
@@ -85,16 +84,36 @@ module Shamwow
         end
       end
 
-      @session.exec 'cat /etc/lsb-release' do |ch, stream, data|
-        unless data.match /^\s*$/
+      # @session.exec 'cat /etc/lsb-release' do |ch, stream, data|
+      #   unless data.match(/^\s*$/) || stream.match(/stderr/)
+      #     begin
+      #       _parse_lsb_release ch[:host], data
+      #     rescue => e
+      #       #puts "------#{e.message}"
+      #     end
+      #   end
+      # end
+      #
+      # @session.exec 'cat /etc/redhat-release'  do |ch, stream, data|
+      #   unless stream.match(/stderr/)
+      #     puts "[#{ch[:host]} : #{stream}] #{data}"
+      #     begin
+      #       _parse_redhat_release ch[:host], data
+      #     rescue => e
+      #       puts "------#{e.message}"
+      #     end
+      #   end
+      # end
+
+      @session.exec 'cat /etc/issue'  do |ch, stream, data|
+        unless stream.match(/stderr/)
           begin
-            _parse_lsb_release ch[:host], data
+            _parse_issue ch[:host], data
           rescue => e
-            #puts "------#{e.message}"
+            puts "------#{e.message}"
           end
         end
       end
-
     end
 
     def _parse_chef_client(host, data)
@@ -105,9 +124,17 @@ module Shamwow
 
     def _parse_lsb_release(host, data)
       ver = data.match(/DISTRIB_DESCRIPTION=(.*)/)[1]
-      ver = ver.strip().gsub! /"/, ''
+      ver = ver.gsub(/"/, '').strip
       _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
+    end
 
+    def _parse_redhat_release(host, data)
+      _save_ssh_data(host, { :os => data, :os_polltime => Time.now })
+    end
+
+    def _parse_issue(host, data)
+      ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
+      _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
     end
 
     def _save_ssh_data(host, attributes)
