@@ -7,7 +7,8 @@ module Shamwow
   class Ssh
 
     def initialize
-
+      @errors = []
+      @errortypes = {}
       @hosts = { }
       @debug = 1
     end
@@ -19,14 +20,14 @@ module Shamwow
           server[:connection_attempts] += 1
           throw :go, :retry
         else
-          puts "ERROR: #{server.to_s} -- #{$ERROR_INFO}"
+          _save_error server.to_s, 'create_session', $ERROR_INFO
           throw :go
         end
       end
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 10
+      @session.concurrent_connections = 50
       #@session.via 'vmbuilder1.sea1.marchex.com', 'jcarter'
     end
 
@@ -47,7 +48,7 @@ module Shamwow
       block = Proc.new do |c|
         if Time.now > lasttick
           lasttick = Time.now + 60
-          puts "--#{Time.now}--Open connections: #{c.open_connections}"
+          puts "#{Time.now}--Open connections: #{c.open_connections}"
         end
         c.busy?
       end
@@ -58,6 +59,10 @@ module Shamwow
     def save
       @hosts.each_value do |o|
         o.save
+      end
+
+      @errortypes.each do |type, count|
+        puts "Error type: #{type}: #{count}"
       end
     end
 
@@ -71,7 +76,7 @@ module Shamwow
       @session.exec 'chef-client --version' do |ch, stream, data|
           unless data.match(/^\s*$/) || data.match(/^ffi/)
 
-          puts "[#{ch[:host]} : #{stream}] #{data}"
+          #puts "[#{ch[:host]} : #{stream}] #{data}"
           begin
             _parse_chef_client ch[:host], data
           rescue => e
@@ -109,6 +114,20 @@ module Shamwow
       o = @hosts["#{host}"]
       o.attributes = attributes
       o.save
+    end
+
+    def _save_error(host, action, message)
+      o = ErrorData.new
+      o.attributes= {
+          :timestamp => Time.now,
+          :hostname => host,
+          :action => action,
+          :message => message
+      }
+      o.save
+      @errors.push(o)
+      @errortypes["#{message}"] ||= 0
+      @errortypes["#{message}"] += 1
     end
   end
 end
