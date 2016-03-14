@@ -75,7 +75,6 @@ module Shamwow
     def _define_execs
       @session.exec 'chef-client --version' do |ch, stream, data|
           unless data.match(/^\s*$/) || data.match(/^ffi/)
-
           begin
             _parse_chef_client ch[:host], data
           rescue => e
@@ -89,7 +88,23 @@ module Shamwow
           begin
             _parse_issue ch[:host], data
           rescue => e
-            puts "------#{e.message}"
+            #puts "------#{e.message}"
+          end
+        end
+      end
+
+      @session.open_channel do |channel|
+        channel.request_pty do |c, success|
+          result = ''
+          raise "could not request pty" unless success
+
+          channel.exec "sudo cat /var/chef/cache/chef-stacktrace.out"
+          channel.on_data do |c_, data|
+            if data =~ /\[sudo\]/ || data =~ /Password/i
+              channel.send_data "PASSWORD\n"
+            else
+              _parse_strace(channel[:host], data)
+            end
           end
         end
       end
@@ -103,6 +118,23 @@ module Shamwow
     def _parse_issue(host, data)
       ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
       _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
+    end
+
+    def _parse_strace(host, data)
+      begin
+        gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
+      rescue
+      end
+      begin
+        method  = data.match(/^([^G\/].+)$/)[1].strip
+      rescue
+      end
+      _save_ssh_data(host, {
+          :chef_strace_method => method,
+          :chef_strace_gentime => gentime.nil? ? nil : Time.parse(gentime),
+          :chef_strace_full => data,
+          :chef_strace_polltime => Time.now
+      })
     end
 
     def _save_ssh_data(host, attributes)

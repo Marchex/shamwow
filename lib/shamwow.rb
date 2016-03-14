@@ -6,7 +6,7 @@ require 'shamwow/version'
 module Shamwow
   testlist = []
   #testlist = ['bumper.sea.marchex.com','vmbuilder1.sea1.marchex.com', 'vmbuilder2.sea1.marchex.com']
-
+  #testlist = ['nimcr1.sea1.marchex.com']
   fh = File.open 'data/cx-hosts.out', 'r'
   fh.each_line do |line|
     #next if line.match(/som1/)
@@ -28,9 +28,9 @@ module Shamwow
     ssh.add_host(stripped)
   end
 
-  puts "session count #{ssh.count_hosts}"
-
+  puts "#{Time.now}-session count #{ssh.count_hosts}"
   ssh.execute
   ssh.save
+  puts "#{Time.now} Done"
 
 end
