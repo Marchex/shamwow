@@ -95,16 +95,22 @@ module Shamwow
 
       @session.open_channel do |channel|
         channel.request_pty do |c, success|
-          result = ''
+          result = String.new
           raise "could not request pty" unless success
 
           channel.exec "sudo cat /var/chef/cache/chef-stacktrace.out"
           channel.on_data do |c_, data|
+            host = channel[:host]
             if data =~ /\[sudo\]/ || data =~ /Password/i
               channel.send_data "PASSWORD\n"
             else
-              _parse_strace(channel[:host], data)
+              result = result.concat data
             end
+          end
+          channel.on_close do |c_, data|
+            attributes = _parse_strace(result)
+            _save_ssh_data(channel[:host], attributes)
+
           end
         end
       end
@@ -120,7 +126,7 @@ module Shamwow
       _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
     end
 
-    def _parse_strace(host, data)
+    def _parse_strace(data)
       begin
         gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
       rescue
@@ -129,12 +135,12 @@ module Shamwow
         method  = data.match(/^([^G\/].+)$/)[1].strip
       rescue
       end
-      _save_ssh_data(host, {
+      {
           :chef_strace_method => method,
           :chef_strace_gentime => gentime.nil? ? nil : Time.parse(gentime),
           :chef_strace_full => data,
           :chef_strace_polltime => Time.now
-      })
+      }
     end
 
     def _save_ssh_data(host, attributes)
