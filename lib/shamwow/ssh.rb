@@ -1,6 +1,9 @@
 require 'net/ssh/multi'
 require 'shamwow/db'
-require 'net/ssh/gateway'
+#Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
+require 'shamwow/ssh/chef_version'
+require 'shamwow/ssh/etc_issue'
+require 'shamwow/ssh/chef_stacktrace'
 
 
 module Shamwow
@@ -11,6 +14,7 @@ module Shamwow
       @errortypes = {}
       @hosts = { }
       @debug = 1
+      @tasks = {}
     end
 
     def create_session
@@ -28,7 +32,6 @@ module Shamwow
       @session.on_error = handler
 
       @session.concurrent_connections = 50
-      #@session.via 'vmbuilder1.sea1.marchex.com', 'jcarter'
     end
 
     def add_host(host)
@@ -43,7 +46,8 @@ module Shamwow
     end
 
     def execute
-      _define_execs
+      #_define_execs
+      load_tasks
       lasttick = Time.now - 60
       block = Proc.new do |c|
         if Time.now > lasttick
@@ -69,78 +73,35 @@ module Shamwow
     def _load_sshdata(host)
       o = SshData.first_or_new({:hostname => host})
       @hosts["#{host}"] = o
-
     end
 
-    def _define_execs
-      @session.exec 'chef-client --version' do |ch, stream, data|
-          unless data.match(/^\s*$/) || data.match(/^ffi/)
-          begin
-            _parse_chef_client ch[:host], data
-          rescue => e
-            #puts "------#{e.message}"
-          end
-        end
-      end
+    def load_tasks
+      tasks = SshTask.constants.select {|c| SshTask.const_get(c).is_a? Class}
+      tasks.each do |task|
+        @session.open_channel do |channel|
+          channel.request_pty do |c, success|
+            result = String.new
+            raise "could not request pty" unless success
+            #
+            channel.exec SshTask.const_get(task).command
+            #
+            channel.on_data do |c_, data|
+              host = channel[:host]
+              if data =~ /\[sudo\]/ || data =~ /Password/i
+                channel.send_data "PASSWORD\n"
+              else
+                result = result.concat data
+              end
+            end
+            #
+            channel.on_close do |c_, data|
+              attributes = SshTask.const_get(task).parse(result)
+              _save_ssh_data(channel[:host], attributes)
 
-      @session.exec 'cat /etc/issue'  do |ch, stream, data|
-        unless stream.match(/stderr/)
-          begin
-            _parse_issue ch[:host], data
-          rescue => e
-            #puts "------#{e.message}"
-          end
-        end
-      end
-
-      @session.open_channel do |channel|
-        channel.request_pty do |c, success|
-          result = String.new
-          raise "could not request pty" unless success
-
-          channel.exec "sudo cat /var/chef/cache/chef-stacktrace.out"
-          channel.on_data do |c_, data|
-            host = channel[:host]
-            if data =~ /\[sudo\]/ || data =~ /Password/i
-              channel.send_data "PASSWORD\n"
-            else
-              result = result.concat data
             end
           end
-          channel.on_close do |c_, data|
-            attributes = _parse_strace(result)
-            _save_ssh_data(channel[:host], attributes)
-
-          end
         end
       end
-    end
-
-    def _parse_chef_client(host, data)
-      ver = (data.split " ")[1].strip
-      _save_ssh_data(host, { :chefver => ver, :chefver_polltime => Time.now })
-    end
-
-    def _parse_issue(host, data)
-      ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
-      _save_ssh_data(host, { :os => ver, :os_polltime => Time.now })
-    end
-
-    def _parse_strace(data)
-      begin
-        gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
-      rescue
-      end
-      begin
-        method  = data.match(/^([^G\/].+)$/)[1].strip
-      rescue
-      end
-      {
-          :chef_strace_method => method,
-          :chef_strace_gentime => gentime.nil? ? nil : Time.parse(gentime),
-          :chef_strace_full => data,
-          :chef_strace_polltime => Time.now
-      }
     end
 
     def _save_ssh_data(host, attributes)
