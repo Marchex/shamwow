@@ -16,6 +16,11 @@ module Shamwow; module SshTask; class Chef_version
           :chefver_polltime => Time.now
       }
     end
+    def self.save(repo, host, attributes)
+      o = repo["#{host}"]
+      o.attributes = attributes
+      o.save
+    end
   end
 
 end;

@@ -4,6 +4,7 @@ require 'shamwow/db'
 require 'shamwow/ssh/chef_version'
 require 'shamwow/ssh/etc_issue'
 require 'shamwow/ssh/chef_stacktrace'
+require 'shamwow/ssh/chef_whyrun'
 
 
 module Shamwow
@@ -12,6 +13,7 @@ module Shamwow
     def initialize
       @errors = []
       @errortypes = {}
+      @taskcounts = {}
       @hosts = { }
       @debug = 1
       @tasks = {}
@@ -65,6 +67,9 @@ module Shamwow
         o.save
       end
 
+      @taskcounts.each do |type, count|
+        puts "Task type: #{type}: #{count}"
+      end
       @errortypes.each do |type, count|
         puts "Error type: #{type}: #{count}"
       end
@@ -95,9 +100,11 @@ module Shamwow
             end
             #
             channel.on_close do |c_, data|
+              #puts Time.now.to_s.concat "--PARSING--#{c_[:host]}--".concat task.to_s
               attributes = SshTask.const_get(task).parse(result)
-              _save_ssh_data(channel[:host], attributes)
-
+              SshTask.const_get(task).save(@hosts, channel[:host], attributes)
+              @taskcounts[task] ||=0
+              @taskcounts[task] += 1
             end
           end
         end

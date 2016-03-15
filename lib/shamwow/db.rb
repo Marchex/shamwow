@@ -1,6 +1,7 @@
 require 'shamwow/db/node'
 require 'shamwow/db/sshdata'
 require 'shamwow/db/errordata'
+require 'shamwow/db/sshdata_chef_whyrun'
 require 'data_mapper'
 require 'dm-migrations'
 
@@ -15,7 +16,7 @@ module Shamwow
 
 
     def bootstrap_db
-      DataMapper.auto_migrate!
+      DataMapper.auto_upgrade!
     end
 
     def create_node node

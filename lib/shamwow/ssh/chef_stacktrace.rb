@@ -6,12 +6,14 @@ module Shamwow; module SshTask; class Chef_stacktrace
   end
   #
   # commoon output from command
-  #   ffi-yajl/json_gem is deprecated, these monkeypatches will be dropped shortly
-  #   Chef: 11.16.4
 
   def self.parse(data)
-    gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
-    method  = data.match(/^([^G\/].+)$/)[1].strip
+    begin
+      gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
+    end
+    begin
+      method  = data.match(/^([^G\/].+)$/)[1].strip
+    end
 
     {
         :chef_strace_method => method,
@@ -19,6 +21,12 @@ module Shamwow; module SshTask; class Chef_stacktrace
         :chef_strace_full => data,
         :chef_strace_polltime => Time.now
     }
+  end
+
+  def self.save(repo, host, attributes)
+    o = repo["#{host}"]
+    o.attributes = attributes
+    o.save
   end
 end
 
