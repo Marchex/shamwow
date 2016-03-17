@@ -2,10 +2,14 @@ require 'net/ssh/multi'
 require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
-require 'shamwow/ssh/etc_issue'
-require 'shamwow/ssh/chef_stacktrace'
-require 'shamwow/ssh/chef_whyrun'
-
+#require 'shamwow/ssh/etc_issue'
+#require 'shamwow/ssh/chef_stacktrace'
+#require 'shamwow/ssh/chef_whyrun'
+#require 'shamwow/ssh/chef_upgrade'
+#require 'shamwow/ssh/chef_start'
+#require 'shamwow/ssh/chef_stop'
+#require 'shamwow/ssh/chef_chmod_stacktrace'
+#require 'shamwow/ssh/gem_list_ldap'
 
 module Shamwow
   class Ssh
@@ -14,7 +18,7 @@ module Shamwow
       @errors = []
       @errortypes = {}
       @taskcounts = {}
-      @hosts = { }
+      @hosts = {}
       @debug = 1
       @tasks = {}
     end
@@ -40,7 +44,7 @@ module Shamwow
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use "jcarter@#{host}", :timeout => 30
+      @session.use "jcarter@#{host}", :timeout => 30, :password => $password
     end
 
     def count_hosts
@@ -92,17 +96,20 @@ module Shamwow
             #
             channel.on_data do |c_, data|
               host = channel[:host]
-              if data =~ /\[sudo\]/ || data =~ /Password/i
-                channel.send_data "PASSWORD\n"
+              if data =~ /\[sudo\]/ || data =~ /[Pp]assword/i
+                channel.send_data $password.concat "\n"
               else
                 result = result.concat data
               end
             end
+            channel.on_extended_data do |c_, data|
+              result = result.concat data
+            end
             #
             channel.on_close do |c_, data|
-              #puts Time.now.to_s.concat "--PARSING--#{c_[:host]}--".concat task.to_s
-              attributes = SshTask.const_get(task).parse(result)
-              SshTask.const_get(task).save(@hosts, channel[:host], attributes)
+              host = channel[:host]
+              attributes = SshTask.const_get(task).parse(host, result)
+              SshTask.const_get(task).save(@hosts, host, attributes)
               @taskcounts[task] ||=0
               @taskcounts[task] += 1
             end

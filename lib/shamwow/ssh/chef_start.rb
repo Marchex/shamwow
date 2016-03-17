@@ -1,20 +1,17 @@
 
-module Shamwow; module SshTask; class Chef_whyrun
+module Shamwow; module SshTask;
+class Chef_start
                                   #
   def self.command
-    'sudo chef-client'
+    'sudo /etc/init.d/chef-client start'
   end
   #
   # commoon output from command
 
   def self.parse(host, data)
-  begin
-      chefver = data.match(/Starting Chef Client, version ([\w\.]+)/)[1]
-    rescue
-    end
-    {
-        :chefver => chefver,
-        :chef_whyrun_full => data[0..65000],
+  {
+        :chefver => 'start_chef_client',
+        :chef_whyrun_full => data,
         :chef_whyrun_polltime => Time.now
     }
   end

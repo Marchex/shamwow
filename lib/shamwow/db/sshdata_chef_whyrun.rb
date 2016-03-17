@@ -5,6 +5,7 @@ module Shamwow
     include DataMapper::Resource
 
     property :id,                         Serial
+    property :chefver,                    String
     property :chef_whyrun_full,           Text
     property :chef_whyrun_polltime,       DateTime
 

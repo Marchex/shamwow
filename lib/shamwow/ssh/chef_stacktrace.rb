@@ -7,12 +7,14 @@ module Shamwow; module SshTask; class Chef_stacktrace
   #
   # commoon output from command
 
-  def self.parse(data)
+  def self.parse(host, data)
     begin
       gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
+    rescue
     end
     begin
       method  = data.match(/^([^G\/].+)$/)[1].strip
+    rescue
     end
 
     {

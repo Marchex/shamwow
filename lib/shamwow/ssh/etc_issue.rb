@@ -7,8 +7,8 @@ module Shamwow; module SshTask; class Etc_issue
     #
     # commoon output from command
 
-    def self.parse(data)
-      ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
+    def self.parse(host, data)
+    ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
       {
           :os => ver,
           :os_polltime => Time.now
