@@ -2,8 +2,8 @@ require 'net/ssh/multi'
 require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
-#require 'shamwow/ssh/etc_issue'
-#require 'shamwow/ssh/chef_stacktrace'
+require 'shamwow/ssh/etc_issue'
+require 'shamwow/ssh/chef_stacktrace'
 #require 'shamwow/ssh/chef_whyrun'
 #require 'shamwow/ssh/chef_upgrade'
 #require 'shamwow/ssh/chef_start'
@@ -15,8 +15,8 @@ module Shamwow
   class Ssh
 
     def initialize
-      @errors = []
-      @errortypes = {}
+      @@errors = []
+      @@errortypes = {}
       @taskcounts = {}
       @hosts = {}
       @debug = 1
@@ -30,7 +30,7 @@ module Shamwow
           server[:connection_attempts] += 1
           throw :go, :retry
         else
-          _save_error server.to_s, 'create_session', $ERROR_INFO
+          save_error server.to_s, 'create_session', $ERROR_INFO
           throw :go
         end
       end
@@ -74,7 +74,7 @@ module Shamwow
       @taskcounts.each do |type, count|
         puts "Task type: #{type}: #{count}"
       end
-      @errortypes.each do |type, count|
+      @@errortypes.each do |type, count|
         puts "Error type: #{type}: #{count}"
       end
     end
@@ -97,7 +97,7 @@ module Shamwow
             channel.on_data do |c_, data|
               host = channel[:host]
               if data =~ /\[sudo\]/ || data =~ /[Pp]assword/i
-                channel.send_data $password.concat "\n"
+                channel.send_data $password += "\n"
               else
                 result = result.concat data
               end
@@ -124,7 +124,10 @@ module Shamwow
       o.save
     end
 
-    def _save_error(host, action, message)
+    def save_error(host, action, message)
+      Ssh._save_error(host, action, message)
+    end
+    def self._save_error(host, action, message)
       o = ErrorData.new
       o.attributes= {
           :timestamp => Time.now,
@@ -133,9 +136,9 @@ module Shamwow
           :message => message
       }
       o.save
-      @errors.push(o)
-      @errortypes["#{message}"] ||= 0
-      @errortypes["#{message}"] += 1
+      @@errors.push(o)
+      @@errortypes["#{message}"] ||= 0
+      @@errortypes["#{message}"] += 1
     end
   end
 end

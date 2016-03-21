@@ -13,7 +13,7 @@ module Shamwow; module SshTask; class Chef_version
       begin
         ver = data.match(/Chef: ([\w\.]+)/)[1]
       rescue
-        Shamwow::Ssh._save_error(host, 'SshTask::Chef_version', $ERROR_INFO)
+        Shamwow::Ssh._save_error(host, 'SshTask::Chef_version', "#{$ERROR_INFO} #{data}")
       end
 
       {

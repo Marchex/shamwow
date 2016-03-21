@@ -11,10 +11,14 @@ module Shamwow; module SshTask; class Chef_stacktrace
     begin
       gentime = data.match(/Generated at (\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\s+[\+-]\d+)/)[1]
     rescue
+      Shamwow::Ssh._save_error(host, 'SshTask::Chef_stacktrace/gentime', "#{$ERROR_INFO} #{data}")
+
     end
     begin
       method  = data.match(/^([^G\/].+)$/)[1].strip
     rescue
+      Shamwow::Ssh._save_error(host, 'SshTask::Chef_stacktrace/method', "#{$ERROR_INFO} #{data}")
+
     end
 
     {

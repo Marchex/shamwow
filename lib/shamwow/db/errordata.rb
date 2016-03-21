@@ -8,7 +8,7 @@ module Shamwow
     property :timestamp,    DateTime
     property :hostname,     String
     property :action,       String
-    property :message,      String,   :length => 200
+    property :message,      Text
   end
 
 end
