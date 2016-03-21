@@ -1,0 +1,24 @@
+CREATE EXTENSION mysql_fdw;
+
+CREATE SERVER soc_mysql
+     FOREIGN DATA WRAPPER mysql_fdw
+     OPTIONS (host '10.108.11.57', port '3306');
+
+CREATE USER MAPPING FOR jcarter
+SERVER soc_mysql
+OPTIONS (username 'jcarter', password 'PASSWORD');
+
+CREATE FOREIGN TABLE zenbot_products(
+     product_group varchar(50),
+     host_groups varchar(2000))
+SERVER soc_mysql
+     OPTIONS (dbname 'soctools', table_name 'zenbot_products');
+
+select * from zenbot_products;
+
+create table products(
+	id serial primary key,
+	product_group varchar(50),
+	host_groups varchar(2000))
+
+insert into products (product_group, host_groups) select * from zenbot_products

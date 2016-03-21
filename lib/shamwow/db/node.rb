@@ -8,7 +8,7 @@ module Shamwow
     property :hostname,         String
     property :domain,           String
     property :product,          String
-    property  :severity,        Integer
+    property :severity,         Integer
     property :datacenter,       Integer
     property :lastseen,         DateTime
     property :comfort,          Integer

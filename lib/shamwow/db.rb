@@ -2,6 +2,7 @@ require 'shamwow/db/node'
 require 'shamwow/db/sshdata'
 require 'shamwow/db/errordata'
 require 'shamwow/db/sshdata_chef_whyrun'
+require 'shamwow/db/products'
 require 'data_mapper'
 require 'dm-migrations'
 
