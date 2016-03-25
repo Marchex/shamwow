@@ -3,11 +3,12 @@ require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
 require 'shamwow/ssh/etc_issue'
-require 'shamwow/ssh/chef_stacktrace'
+#require 'shamwow/ssh/chef_stacktrace'
 #require 'shamwow/ssh/chef_whyrun'
 #require 'shamwow/ssh/chef_upgrade'
 #require 'shamwow/ssh/chef_start'
 #require 'shamwow/ssh/chef_stop'
+#require 'shamwow/ssh/chef_verify_running_version'
 #require 'shamwow/ssh/chef_chmod_stacktrace'
 #require 'shamwow/ssh/gem_list_ldap'
 
@@ -37,7 +38,7 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 50
+      @session.concurrent_connections = 100
     end
 
     def add_host(host)
@@ -93,6 +94,7 @@ module Shamwow
             raise "could not request pty" unless success
             #
             channel.exec SshTask.const_get(task).command
+            # puts SshTask.const_get(task).command
             #
             channel.on_data do |c_, data|
               host = channel[:host]
