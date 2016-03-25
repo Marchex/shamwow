@@ -2,7 +2,7 @@ module Shamwow; module SshTask;
 class Chef_stop
 
   def self.command
-    'sudo /etc/init.d/chef-client stop'
+    'sudo pkill -9 chef-client && sudo rm -f /var/run/chef/client.pid; ps -ef | grep chef-client'
   end
 
   def self.parse(host, data)
