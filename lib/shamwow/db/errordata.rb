@@ -7,7 +7,7 @@ module Shamwow
     property :id,           Serial
     property :timestamp,    DateTime
     property :hostname,     String
-    property :action,       String
+    property :action,       String, :length => 200
     property :message,      Text
   end
 

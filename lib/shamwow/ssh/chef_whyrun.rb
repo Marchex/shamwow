@@ -15,15 +15,15 @@ module Shamwow; module SshTask; class Chef_whyrun
 
   end
     {
-        :chefver => chefver,
-        :chef_whyrun_full => data[0..65000],
-        :chef_whyrun_polltime => Time.now
+        :category => chefver,
+        :chef_exec_output => data[0..65000],
+        :chef_exec_polltime => Time.now
     }
   end
 
   def self.save(repo, host, attributes)
     o = repo["#{host}"]
-    o.sshdata_chef_whyrun.new(attributes)
+    o.sshdata_exec_output.new(attributes)
     o.save
   end
 end

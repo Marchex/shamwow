@@ -15,7 +15,7 @@ module Shamwow
     property :chef_strace_full,           Text
     property :chef_strace_polltime,       DateTime
 
-    has n, :sshdata_chef_whyrun
+    has n, :sshdata_exec_output
 
     attr_reader :os_polltime
     attr_reader :chefver_polltime

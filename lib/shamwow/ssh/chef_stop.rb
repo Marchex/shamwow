@@ -7,15 +7,15 @@ class Chef_stop
 
   def self.parse(host, data)
   {
-        :chefver => 'stop_chef_client',
-        :chef_whyrun_full => data,
-        :chef_whyrun_polltime => Time.now
+        :category => 'stop_chef_client',
+        :chef_exec_output => data,
+        :chef_exec_polltime => Time.now
     }
   end
 
   def self.save(repo, host, attributes)
     o = repo["#{host}"]
-    o.sshdata_chef_whyrun.new(attributes)
+    o.sshdata_exec_output.new(attributes)
     o.save
   end
 end

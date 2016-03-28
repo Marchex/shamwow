@@ -10,15 +10,15 @@ class Gem_list_ldap
 
   def self.parse(host, data)
   {
-        :chefver => 'gem_list_ldap',
-        :chef_whyrun_full => data,
-        :chef_whyrun_polltime => Time.now
+        :category => 'gem_list_ldap',
+        :chef_exec_output => data,
+        :chef_exec_polltime => Time.now
     }
   end
 
   def self.save(repo, host, attributes)
     o = repo["#{host}"]
-    o.sshdata_chef_whyrun.new(attributes)
+    o.sshdata_exec_output.new(attributes)
     o.save
   end
 end
