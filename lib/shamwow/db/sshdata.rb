@@ -14,6 +14,11 @@ module Shamwow
     property :chef_strace_gentime,        DateTime
     property :chef_strace_full,           Text
     property :chef_strace_polltime,       DateTime
+    property :chef_lsof_count,            Integer
+    property :chef_lsof_polltime,         DateTime
+    property :nrpe_chefcheck_checksum,    String, :length => 100
+    property :nrpe_chefcheck_fileinfo,    String, :length => 100
+    property :nrpe_checksum_polltime,     DateTime
 
     has n, :sshdata_exec_output
 

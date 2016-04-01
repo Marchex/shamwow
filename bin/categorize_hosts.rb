@@ -8,7 +8,9 @@ module Shamwow
   db.bootstrap_db
   patterns = {}
   products = Products.all
-  hosts = Host.all
+
+  sshhosts = SshData.all
+
   products.each do |product|
     p_array = product[:host_groups].split
 
@@ -17,7 +19,8 @@ module Shamwow
     end
   end
   puts patterns.count
-  hosts.each do |host|
+  sshhosts.each do |sshhost|
+    host = Host.first_or_create({ :hostname => sshhost[:hostname]})
     name = host[:hostname]
     case
       when name.match(/devint/) || name.match(/^di\-/)
