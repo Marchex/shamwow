@@ -1,5 +1,6 @@
 select os, count(os)
 from shamwow_ssh_data
-where os not like 'Ubuntu 12%' and chefver not like '12%'
+where --os not like 'Ubuntu 12%' and
+      chefver not like '12%'
 group by os
 order by count desc

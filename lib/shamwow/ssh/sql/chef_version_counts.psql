@@ -1,4 +1,5 @@
 select chefver, count(chefver)
 from shamwow_ssh_data
+--where chefver_polltime >  localtimestamp - interval '1 hour'
 group by chefver
 order by count desc

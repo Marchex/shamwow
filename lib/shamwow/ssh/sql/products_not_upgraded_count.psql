@@ -1,7 +1,7 @@
 select product, count(*)
 from shamwow_hosts h
   join shamwow_ssh_data s on s.hostname = h.hostname
-where s.chefver not like '12%' and
+where s.chefver not like '12%' --and
 --       os not like 'Debian%' and
 --       os not like 'Ubuntu 10%' and
 --       os not like  'CentOS%' and
