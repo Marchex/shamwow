@@ -1,0 +1,8 @@
+select * from shamwow_error_data order by id desc limit 10
+
+select * from shamwow_ssh_data where nrpe_checksum_polltime is not null
+
+select nrpe_chefcheck_checksum, count(*) from shamwow_ssh_data group by nrpe_chefcheck_checksum
+select distinct(hostname) from shamwow_ssh_data where nrpe_chefcheck_checksum = '9aad2e084ce0bc7fb7021a42a4c3484f' order by hostname
+
+select distinct(hostname) from shamwow_error_data where action like '%checksum%' and message like '%No such file%' order by hostname

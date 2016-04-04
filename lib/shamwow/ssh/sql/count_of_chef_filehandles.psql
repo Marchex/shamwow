@@ -1,0 +1,4 @@
+select hostname, os, chefver, chef_lsof_count
+from shamwow_ssh_data
+where chef_lsof_count is not null
+order by chef_lsof_count desc;
