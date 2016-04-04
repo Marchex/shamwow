@@ -1,0 +1,9 @@
+with a as (select max(w.id), s.hostname
+from shamwow_sshdata_exec_outputs w
+join shamwow_ssh_data s on s.id = w.ssh_data_id
+where w.category = 'upgrade_to_12.6.0'
+group by hostname)
+select a.*, ww.chef_exec_polltime, ww.chef_exec_output from a
+join shamwow_sshdata_exec_outputs ww on a.max = ww.id
+--where  ww.chef_exec_polltime > localtimestamp - interval '1 hour'
+order by ww.id desc;

@@ -1,0 +1,4 @@
+select chefver, count(chefver)
+from shamwow_ssh_data
+group by chefver
+order by count desc

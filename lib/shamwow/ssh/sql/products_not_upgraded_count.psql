@@ -1,0 +1,12 @@
+select product, count(*)
+from shamwow_hosts h
+  join shamwow_ssh_data s on s.hostname = h.hostname
+where s.chefver not like '12%' and
+--       os not like 'Debian%' and
+--       os not like 'Ubuntu 10%' and
+--       os not like  'CentOS%' and
+--       os not like 'Oracle%' and
+--       os is not null and
+--       os not like ''
+group by product
+order by count desc;
