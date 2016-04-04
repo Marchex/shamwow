@@ -45,10 +45,10 @@ Vagrant.configure(2) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
-    vb.gui = true
+    #vb.gui = true
 
     # Customize the amount of memory on the VM:
-    vb.memory = "2048"
+    vb.memory = "1024"
   end
   #
   # View the documentation for the provider you are using for more
@@ -69,6 +69,7 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y build-essential
     sudo apt-get install -y libpq-dev postgresql-server-dev-9.5
     sudo apt-get install -y git
+    sudo apt-get install -y lsof
     sudo apt-get install -y ruby
     sudo apt-get install -y ruby-dev
     sudo gem install bundler
