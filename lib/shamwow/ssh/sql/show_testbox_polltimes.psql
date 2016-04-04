@@ -1,0 +1,8 @@
+select hostname
+  , chefver_polltime
+  , os_polltime
+  , chef_strace_polltime
+  , nrpe_checksum_polltime
+  , chef_lsof_polltime
+from shamwow_ssh_data
+where hostname = 'vmbuilder1.sea1.marchex.com'
