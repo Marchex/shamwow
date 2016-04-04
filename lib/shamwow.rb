@@ -3,19 +3,15 @@ require 'shamwow/ssh'
 require 'shamwow/version'
 $password = ARGV[0]
 module Shamwow
-  testlist = []
-  #testlist = ['ciaaweb2.devint.marchex.com']
+  testlist = ['vmbuilder1.sea1.marchex.com']
 
-  fh = File.open 'data/hosts.txt', 'r'
-  fh.each_line do |line|
-    #next if line.match(/som1/)
-    #next if line.match(/phl/)
-    #next if line.match(/syd/)
-    testlist.push(line.strip)
-  end
+  # fh = File.open 'data/hosts.txt', 'r'
+  # fh.each_line do |line|
+  #   testlist.push(line.strip)
+  # end
 
-  #db = Shamwow::Db.new('postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow', true)
-  db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
+  db = Shamwow::Db.new('postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow', true)
+  #db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
   db.bootstrap_db
 
   ssh = Shamwow::Ssh.new
@@ -33,12 +29,3 @@ module Shamwow
   puts "#{Time.now} Done"
 
 end
-
-# Host.create({
-#               :hostname => stripped,
-#               :domain => stripped.match(/\w+\.([\w\.]+)/)[1],
-#               :product => 'CX',
-#               :severity => 0,
-#               :cohort => 1,
-#               :lastseen => Time.now
-#             })
