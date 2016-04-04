@@ -5,10 +5,19 @@ require 'slop'
 
 $password = ARGV[0]
 module Shamwow
+  testlist = []
+
   opts = Slop.parse do |o|
-    o.string '-h', '--help'
-    o.string '--host', 'run on a hostname', default: 'vmbuilder1.sea1.marchex.com'
-    o.bool '--all', 'poll all known hosts'
+    o.on '-h', '--help' do
+      puts 'HELP!'
+      exit
+    end
+    o.string '--host', 'run on a hostname', default: nil
+    o.string '--from', 'hosts from a file', default: nil
+    o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
+    #o.string '-u', '--user', default: Process.uid
+    #o.bool '-p', '--password', 'read password from stdin'
+    #o.bool '--all', 'poll all known hosts'
     o.bool '--dns', 'poll dns'
     o.bool '--ssh', 'poll ssh'
     o.on '--version', 'print the version' do
@@ -17,29 +26,39 @@ module Shamwow
     end
   end
 
+  unless opts[:host].nil?
+    testlist.push opts[:host]
+  end
 
+  unless opts[:from].nil?
+    fh = File.open opts[:from], 'r'
+    fh.each_line do |line|
+      testlist.push(line.strip)
+    end
+  end
 
-  # fh = File.open 'data/hosts.txt', 'r'
-  # fh.each_line do |line|
-  #   testlist.push(line.strip)
-  # end
-
-  db = Shamwow::Db.new('postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow', true)
+  db = Shamwow::Db.new(opts[:connection], true)
   #db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
   db.bootstrap_db
 
-  ssh = Shamwow::Ssh.new
-  ssh.create_session
+  if opts.ssh?
+    ssh = Shamwow::Ssh.new
+    ssh.create_session
 
-  testlist.each do |line|
-    stripped = line.strip
+    testlist.each do |line|
+      stripped = line.strip
 
-    ssh.add_host(stripped)
+      ssh.add_host(stripped)
+    end
+
+    puts "#{Time.now}-session count #{ssh.count_hosts}"
+    ssh.execute
+    ssh.save
+    puts "#{Time.now} Done"
   end
 
-  puts "#{Time.now}-session count #{ssh.count_hosts}"
-  ssh.execute
-  ssh.save
-  puts "#{Time.now} Done"
+  if opts.dns?
+
+  end
 
 end

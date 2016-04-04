@@ -2,7 +2,7 @@ require 'net/ssh/multi'
 require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
-require 'shamwow/ssh/etc_issue'
+#require 'shamwow/ssh/etc_issue'
 #require 'shamwow/ssh/chef_stacktrace'
 #require 'shamwow/ssh/chef_whyrun'
 #require 'shamwow/ssh/chef_upgrade'
@@ -13,7 +13,7 @@ require 'shamwow/ssh/etc_issue'
 #require 'shamwow/ssh/gem_list_ldap'
 #require 'shamwow/ssh/nrpe_upgrade_checkchef'
 #require 'shamwow/ssh/nrpe_get_checkchef_checksum'
-require 'shamwow/ssh/chef_lsof_count'
+#require 'shamwow/ssh/chef_lsof_count'
 
 module Shamwow
   class Ssh
