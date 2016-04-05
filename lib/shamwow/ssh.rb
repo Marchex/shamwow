@@ -2,18 +2,18 @@ require 'net/ssh/multi'
 require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
-#require 'shamwow/ssh/etc_issue'
-#require 'shamwow/ssh/chef_stacktrace'
-#require 'shamwow/ssh/chef_whyrun'
-#require 'shamwow/ssh/chef_upgrade'
-#require 'shamwow/ssh/chef_start'
-#require 'shamwow/ssh/chef_stop'
-#require 'shamwow/ssh/chef_verify_running_version'
-#require 'shamwow/ssh/chef_chmod_stacktrace'
-#require 'shamwow/ssh/gem_list_ldap'
-#require 'shamwow/ssh/nrpe_upgrade_checkchef'
-#require 'shamwow/ssh/nrpe_get_checkchef_checksum'
-#require 'shamwow/ssh/chef_lsof_count'
+require 'shamwow/ssh/etc_issue'
+require 'shamwow/ssh/chef_stacktrace'
+require 'shamwow/ssh/chef_whyrun'
+require 'shamwow/ssh/chef_upgrade'
+require 'shamwow/ssh/chef_start'
+require 'shamwow/ssh/chef_stop'
+require 'shamwow/ssh/chef_verify_running_version'
+require 'shamwow/ssh/chef_chmod_stacktrace'
+require 'shamwow/ssh/gem_list_ldap'
+require 'shamwow/ssh/nrpe_upgrade_checkchef'
+require 'shamwow/ssh/nrpe_get_checkchef_checksum'
+require 'shamwow/ssh/chef_lsof_count'
 
 module Shamwow
   class Ssh
@@ -55,9 +55,9 @@ module Shamwow
       @session.servers.count
     end
 
-    def execute
+    def execute(sshtasks)
       #_define_execs
-      load_tasks
+      load_tasks(sshtasks)
       lasttick = Time.now - 60
       block = Proc.new do |c|
         if Time.now > lasttick
@@ -88,8 +88,12 @@ module Shamwow
       @hosts["#{host}"] = o
     end
 
-    def load_tasks
-      tasks = SshTask.constants.select {|c| SshTask.const_get(c).is_a? Class}
+    def load_tasks(sshtasks)
+      tasks = []
+      valid_task_names = SshTask.constants.select {|c| SshTask.const_get(c).is_a? Class}
+      sshtasks.each do |name|
+        tasks = valid_task_names.select {|s| s.to_s == name }
+      end
       tasks.each do |task|
         @session.open_channel do |channel|
           channel.request_pty do |c, success|

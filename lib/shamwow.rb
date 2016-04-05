@@ -15,6 +15,7 @@ module Shamwow
     o.string '--host', 'run on a hostname', default: nil
     o.string '--from', 'hosts from a file', default: nil
     o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
+    o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
     #o.string '-u', '--user', default: Process.uid
     #o.bool '-p', '--password', 'read password from stdin'
     #o.bool '--all', 'poll all known hosts'
@@ -52,7 +53,7 @@ module Shamwow
     end
 
     puts "#{Time.now}-session count #{ssh.count_hosts}"
-    ssh.execute
+    ssh.execute(opts[:sshtasks])
     ssh.save
     puts "#{Time.now} Done"
   end
