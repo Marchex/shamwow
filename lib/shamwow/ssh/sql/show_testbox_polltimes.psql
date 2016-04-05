@@ -1,4 +1,5 @@
 select hostname
+  , chefver
   , chefver_polltime
   , os_polltime
   , chef_strace_polltime

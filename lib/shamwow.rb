@@ -2,8 +2,9 @@ require 'shamwow/db'
 require 'shamwow/ssh'
 require 'shamwow/version'
 require 'slop'
+require 'highline/import'
 
-$password = ARGV[0]
+
 module Shamwow
   testlist = []
 
@@ -17,7 +18,8 @@ module Shamwow
     o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
     o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
     #o.string '-u', '--user', default: Process.uid
-    #o.bool '-p', '--password', 'read password from stdin'
+    o.string '-P', '--password', 'read password from args'
+    o.bool '-p', '--askpass', 'read password from stdlin', default: nil
     #o.bool '--all', 'poll all known hosts'
     o.bool '--dns', 'poll dns'
     o.bool '--ssh', 'poll ssh'
@@ -25,6 +27,10 @@ module Shamwow
       puts Slop::VERSION
       exit
     end
+  end
+
+  unless opts[:askpass].nil?
+    $password = ask("Enter Password:") {|q| q.echo = false}
   end
 
   unless opts[:host].nil?

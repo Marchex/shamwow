@@ -1,0 +1,10 @@
+with a as (select chefver, chef_lsof_count
+from shamwow_ssh_data
+where chefver is not null and
+      chef_lsof_count is not null and
+      chef_lsof_count <> 0)
+select chefver, count(chefver) as lsofcount_GT_70
+from a
+where chef_lsof_count > 70
+group by chefver
+order by chefver desc
