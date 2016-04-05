@@ -12,7 +12,9 @@ module Shamwow
     end
 
     def transfer_zone(domain)
-      p Net::DNS::Resolver.start(domain, Net::DNS::AXFR)
+      dns = Net::DNS::Resolver.new #.start(domain, Net::DNS::AXFR)
+      dns.tcp_timeout = 15
+      dns.search(domain, Net::DNS::AXFR)
     end
   end
 end
