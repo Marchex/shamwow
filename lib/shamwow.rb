@@ -1,5 +1,6 @@
 require 'shamwow/db'
 require 'shamwow/ssh'
+require 'shamwow/dns'
 require 'shamwow/version'
 require 'slop'
 require 'highline/import'
@@ -18,8 +19,8 @@ module Shamwow
     o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
     o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
     #o.string '-u', '--user', default: Process.uid
-    o.string '-P', '--password', 'read password from args'
-    o.bool '-p', '--askpass', 'read password from stdlin', default: nil
+    o.string '-P', '--password', 'read password from args', default: nil
+    o.bool '-p', '--askpass', 'read password from stdlin', default: false
     #o.bool '--all', 'poll all known hosts'
     o.bool '--dns', 'poll dns'
     o.bool '--ssh', 'poll ssh'
@@ -29,8 +30,12 @@ module Shamwow
     end
   end
 
-  unless opts[:askpass].nil?
-    $password = ask("Enter Password:") {|q| q.echo = false}
+  if opts[:askpass]
+    $password = ask("Enter Password:") {|q| q.echo = false }
+  end
+
+  unless opts[:password].nil?
+    $password = opts[:password]
   end
 
   unless opts[:host].nil?
@@ -47,6 +52,12 @@ module Shamwow
   db = Shamwow::Db.new(opts[:connection], true)
   #db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
   db.bootstrap_db
+
+  if opts.dns?
+    dns = Shamwow::Dns.new
+    #dns.get_host(opts[:host])
+    dns.transfer_zone('marchex.com')
+  end
 
   if opts.ssh?
     ssh = Shamwow::Ssh.new
