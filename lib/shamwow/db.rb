@@ -3,6 +3,7 @@ require 'shamwow/db/sshdata'
 require 'shamwow/db/errordata'
 require 'shamwow/db/sshdata_exec_output'
 require 'shamwow/db/products'
+require 'shamwow/db/dnsdata'
 require 'data_mapper'
 require 'dm-migrations'
 

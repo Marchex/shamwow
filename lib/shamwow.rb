@@ -55,8 +55,11 @@ module Shamwow
 
   if opts.dns?
     dns = Shamwow::Dns.new
-    #dns.get_host(opts[:host])
-    dns.transfer_zone('marchex.com')
+    # out = dns.transfer_zone('marchex.com')
+    # dns.update_records(out)
+    # dns.save_records
+    dns.parse_records
+
   end
 
   if opts.ssh?
