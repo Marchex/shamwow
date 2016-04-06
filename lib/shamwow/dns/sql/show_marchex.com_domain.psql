@@ -1,0 +1,4 @@
+select name, type, address
+from shamwow_dns_data
+where domain = 'marchex.com.'
+order by name

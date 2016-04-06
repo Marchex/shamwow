@@ -30,10 +30,11 @@ module Shamwow
         puts "#{l}"
         line = l.chomp
         m = line.match(/^([\*\w\._\-]+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(.*)$/)
-        o = DnsData.first_or_new({:name => m[1], :type => m[4] })
+        n = m[1].gsub!(/\.$/,'')
+        o = DnsData.first_or_new({:name => n, :type => m[4] })
         i = Integer(m[2])
         o.attributes={ :ttl => i, :class => m[3], :type => m[4], :address => m[5], :polltime => nowtime }
-        @hosts["#{m[4]}--#{m[1]}"] = o
+        @hosts["#{m[4]}--#{n}"] = o
         o.save
       end
     end
@@ -55,8 +56,9 @@ module Shamwow
     def parse_records
       all = DnsData.all
       all.each do |o|
-        p o
         o.domain = o.name.match(/^[\w\-_\*]+\.(.+)$/)[1]
+        n = o.name.gsub(/\.$/,'')
+        o.name = n
         if o.type == 'A'
           o.classB = o.address.match(/^(\d{1,3}\.\d{1,3})[\d\.]+/)[1]
           o.classC = o.address.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3})[\d\.]+/)[1]
