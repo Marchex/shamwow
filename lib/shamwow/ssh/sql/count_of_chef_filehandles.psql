@@ -1,4 +1,4 @@
 select hostname, os, chefver, chef_lsof_count, chef_lsof_polltime
 from shamwow_ssh_data
 where chef_lsof_count is not null
-order by chef_lsof_count desc;
+order by chef_lsof_polltime desc;

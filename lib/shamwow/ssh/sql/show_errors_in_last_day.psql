@@ -1,0 +1,4 @@
+select hostname, message
+from shamwow_error_data
+where timestamp > localtimestamp - interval '1 day'
+order by timestamp desc

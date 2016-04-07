@@ -1,0 +1,40 @@
+with ver as (
+    select date_trunc('day', chefver_polltime) "day", count(id)
+    from shamwow_ssh_data
+    group by day
+    order by day desc),
+    strace as (
+      select date_trunc('day', chef_strace_polltime) "day", count(id)
+      from shamwow_ssh_data
+      group by day
+      order by day desc),
+    nrpe as (
+      select date_trunc('day', nrpe_checksum_polltime) "day", count(id)
+      from shamwow_ssh_data
+      group by day
+      order by day desc),
+    lsof as (
+      select date_trunc('day', chef_lsof_polltime) "day", count(id)
+      from shamwow_ssh_data
+      group by day
+      order by day desc),
+    day as (select d.day from
+      (
+        select day from ver union ALL
+        select day from strace union all
+        select day from nrpe union ALL
+        select day from lsof) d
+  group by d.day
+)
+select day.day
+  ,ver.count chefver_count
+  ,strace.count cheftrace_count
+  ,nrpe.count nrpe_checksum_count
+  ,lsof.count lsof_count
+from day
+  left join ver on day.day = ver.day
+  left join strace on day.day = strace.day
+  left join nrpe on day.day = nrpe.day
+  left join lsof on day.day = lsof.day
+order by day.day desc
+
