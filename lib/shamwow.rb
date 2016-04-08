@@ -1,6 +1,7 @@
 require 'shamwow/db'
 require 'shamwow/ssh'
 require 'shamwow/dns'
+require 'shamwow/http'
 require 'shamwow/version'
 require 'slop'
 require 'highline/import'
@@ -24,6 +25,7 @@ module Shamwow
     #o.bool '--all', 'poll all known hosts'
     o.bool '--dns', 'poll dns'
     o.bool '--ssh', 'poll ssh'
+    o.bool '--net', 'poll network engineerings website'
     o.on '--version', 'print the version' do
       puts Slop::VERSION
       exit
@@ -78,8 +80,8 @@ module Shamwow
     puts "#{Time.now} Done"
   end
 
-  if opts.dns?
-
+  if opts.net?
+    Shamwow::Http
   end
 
 end
