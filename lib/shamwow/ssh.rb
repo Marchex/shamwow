@@ -57,7 +57,7 @@ module Shamwow
 
     def execute(sshtasks)
       #_define_execs
-      load_tasks(sshtasks)
+      load_tasks(parse_tasks(ssh_tasks))
       lasttick = Time.now - 60
       block = Proc.new do |c|
         if Time.now > lasttick
@@ -88,12 +88,17 @@ module Shamwow
       @hosts["#{host}"] = o
     end
 
-    def load_tasks(sshtasks)
+    def parse_tasks(sshtasks)
       tasks = []
       valid_task_names = SshTask.constants.select {|c| SshTask.const_get(c).is_a? Class}
       sshtasks.each do |name|
-        tasks = valid_task_names.select {|s| s.to_s == name }
+        tasks.push valid_task_names.select {|s| s.to_s == name }[0] unless nil?
       end
+      tasks
+    end
+
+    def load_tasks(tasks)
+
       tasks.each do |task|
         @session.open_channel do |channel|
           channel.request_pty do |c, success|
