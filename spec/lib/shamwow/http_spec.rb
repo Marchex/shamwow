@@ -30,10 +30,17 @@ describe 'Http' do
     result = h.parse_layer1("a01-tor-a.som1.marchex.com: mgt up MGT
 a01-tor-a.som1.marchex.com: port10 up r630a0101_s2_data
 a01-tor-a.som1.marchex.com: port11 up r630a0102_s1_stor
+as1-a01-admin.som1.marchex.com: gi0/10 up r630a0101_ipmi
+as1-a01-admin.som1.marchex.com: gi0/10 up
 ")
     #
     # asset
-    #execpt(result).to
+    expect(result.count).to eq(5)
+    expect(result[0]).not_to eq(nil)
+    expect(result[1]).not_to eq(nil)
+    expect(result[2]).not_to eq(nil)
+    expect(result[3]).not_to eq(nil)
+    expect(result[4]).not_to eq(nil)
   end
-
+\
 end

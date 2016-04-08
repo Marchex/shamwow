@@ -81,7 +81,10 @@ module Shamwow
   end
 
   if opts.net?
-    Shamwow::Http
+    h = Shamwow::Http.new
+    data = h.get_layer1
+    h.parse_layer1(h.remove_header(data))
+    h.save_all_layer1
   end
 
 end

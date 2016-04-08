@@ -3,7 +3,8 @@ require 'net/http'
 
 module Shamwow
   class Http
-    def initalize
+    def initialize
+      @ports = []
 
     end
 
@@ -17,10 +18,24 @@ module Shamwow
     end
 
     def parse_layer1(data)
+
       data.each_line do |line|
+        next if line.match(/^\s*$/)
+
         m = nil
-        m = line.match(/^([\w\-_\.]+):\s+(\w+)\s+(\w+)\s+(.+)$/)
-        p m
+        m = line.match(/^([\w\-_\.]+):\s+([\w\/:\-]+|Port-channel\s\d+)\s+(\w+)\s*(.*)$/)
+        p line if m.nil?
+        @ports.push(m)
+      end
+      @ports
+    end
+
+    def save_all_layer1()
+      polltime = Time.now
+      @ports.each do |m|
+        o = Layer1Data.first_or_create({:ethswitch => m[1], :interface => m[2]})
+        o.attributes= { :linkstate => m[3], :description => m[4], :polltime => polltime }
+        o.save
       end
     end
   end
