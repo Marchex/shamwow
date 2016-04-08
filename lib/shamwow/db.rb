@@ -5,6 +5,7 @@ require 'shamwow/db/sshdata_exec_output'
 require 'shamwow/db/products'
 require 'shamwow/db/dnsdata'
 require 'shamwow/db/layer1data'
+require 'shamwow/db/layer2data'
 require 'data_mapper'
 require 'dm-migrations'
 
