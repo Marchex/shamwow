@@ -83,11 +83,18 @@ module Shamwow
   if opts.net?
     h = Shamwow::Http.new
     # layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
-    # h.parse_layer1(h.remove_header(layer1))
+    # parsed = h.parse_layer1(h.remove_header(layer1))
+    # p parsed.count
     # h.save_all_layer1
-    layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
-    h.parse_layer2(h.remove_header(layer2))
+    #layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
+    layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
+    parsed = h.parse_layer2(h.remove_header(layer2))
+    p parsed.count
     h.save_all_layer2
+    layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
+    parsed = h.parse_layer3(h.remove_header(layer3))
+    p parsed.count
+    h.save_all_layer3
   end
 
 end

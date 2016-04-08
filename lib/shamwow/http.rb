@@ -4,7 +4,9 @@ require 'net/http'
 module Shamwow
   class Http
     def initialize
-      @ports = []
+      @layer1 = []
+      @layer2 = []
+      @layer3 = []
 
     end
 
@@ -14,7 +16,7 @@ module Shamwow
     end
 
     def remove_header(data)
-      data.gsub!(/^.+records\n/,'')
+      data.gsub!(/^.+records\n/,'') || data
     end
 
     def parse_layer1(data)
@@ -25,14 +27,14 @@ module Shamwow
         m = nil
         m = line.match(/^([\w\-_\.]+):\s+([\w\/:\-]+|Port-channel\s\d+)\s+(\w+)\s*(.*)$/)
         p line if m.nil?
-        @ports.push(m)
+        @layer1.push(m)
       end
-      @ports
+      @layer1
     end
 
     def save_all_layer1()
       polltime = Time.now
-      @ports.each do |m|
+      @layer1.each do |m|
         o = Layer1Data.first_or_create({:ethswitch => m[1], :interface => m[2]})
         o.attributes= { :linkstate => m[3], :description => m[4], :polltime => polltime }
         o.save
@@ -48,18 +50,46 @@ module Shamwow
         m = line.match(/^([\w\-_\.]+):\s+([\w\/:\-\,]+|Port-channel\s\d+)\s+(\w+)\s+(\w+)$/)
         if m.nil?
           p line
+        else
+          @layer2.push(m)
         end
-        @ports.push(m)
       end
-      @ports
+      @layer2
     end
 
     def save_all_layer2()
       polltime = Time.now
-      @ports.each do |m|
-        o = Layer2Data.first_or_create({:ethswitch => m[1], :interface => m[2]})
+      @layer2.each do |m|
+        o = Layer2Data.first_or_create({:ethswitch => m[1], :interface => m[2], :macaddress => m[3]})
         prefix = m[3][0..5]
-        o.attributes= { :macaddress => m[3], :macprefix => prefix, :vlan => m[4], :polltime => polltime }
+        o.attributes= { :macprefix => prefix, :vlan => m[4], :polltime => polltime }
+        o.save
+      end
+    end
+
+    def parse_layer3(data)
+      data.each_line do |l|
+        next if l.match(/^\s*$/)
+        line = l.chomp
+
+        m = nil
+        #admin-fw.som1.marchex.com: ge-0/0/2.0 deadbeefdb95 10.30.10.83  db-bil1qa-a-r1.som1.marchex.com
+        m = line.match(/^([\w\-_\.]+):\s+([\w\/:\-\,\._]+|Port-channel\s\d+)\s+(\w+)\s+([\d\.]+)\s+([\w\.\-_]+)$/)
+        if m.nil?
+          p line
+        else
+          @layer3.push(m)
+        end
+      end
+      @layer3
+    end
+
+    def save_all_layer3()
+      polltime = Time.now
+      @layer3.each do |m|
+        o = Layer3Data.first_or_create({:ipgateway => m[1], :port => m[2], :macaddress => m[3], :ipaddress => m[4]})
+        prefix = m[3][0..5]
+        o.attributes= {  :macprefix => prefix, :rdns => m[5], :polltime => polltime }
         o.save
       end
     end
