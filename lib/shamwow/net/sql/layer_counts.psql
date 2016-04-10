@@ -1,0 +1,15 @@
+create or replace view layer_counts AS
+select layer, count from (
+with a as (select 'L1'::TEXT layer, count(*) from shamwow_layer1_data),
+b as (select 'L2'::TEXT layer, count(*) from shamwow_layer2_data),
+c as (select 'L3'::TEXT layer, count(*) from shamwow_layer3_data)
+select layer, count from a UNION
+select layer, count from b UNION
+select layer, count from c) as cc
+  order by layer;
+
+
+ALTER TABLE layer_counts
+OWNER TO shamwow;
+GRANT ALL ON TABLE layer_counts TO shamwow;
+GRANT SELECT ON TABLE layer_counts TO wowread;

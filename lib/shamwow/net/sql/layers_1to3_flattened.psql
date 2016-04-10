@@ -1,0 +1,10 @@
+CREATE OR REPLACE VIEW layers_1to3_flattened AS
+  SELECT l1.ethswitch, l1.interface, l2.macaddress, l2.vlan, l3.ipgateway, l3.port, l3.ipaddress, l3.rdns
+  FROM shamwow_layer1_data l1
+    JOIN shamwow_layer2_data l2 ON l1.ethswitch::text = l2.ethswitch::text AND l1.interface::text = l2.interface::text
+    JOIN shamwow_layer3_data l3 ON l2.macaddress::text = l3.macaddress::text;
+
+ALTER TABLE layers_1to3_flattened
+OWNER TO shamwow;
+GRANT ALL ON TABLE layers_1to3_flattened TO shamwow;
+GRANT SELECT ON TABLE layers_1to3_flattened TO wowread;

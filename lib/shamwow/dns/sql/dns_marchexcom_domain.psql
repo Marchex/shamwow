@@ -1,0 +1,10 @@
+CREATE OR REPLACE VIEW dns_marchexcom_domain AS
+select name, type, address
+from shamwow_dns_data
+where domain = 'marchex.com'
+order by name;
+
+ALTER TABLE dns_marchexcom_domain
+OWNER TO shamwow;
+GRANT ALL ON TABLE dns_marchexcom_domain TO shamwow;
+GRANT SELECT ON TABLE dns_marchexcom_domain TO wowread;
