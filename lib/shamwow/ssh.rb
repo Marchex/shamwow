@@ -57,7 +57,7 @@ module Shamwow
 
     def execute(sshtasks)
       #_define_execs
-      load_tasks(parse_tasks(ssh_tasks))
+      load_tasks(parse_tasks(sshtasks))
       lasttick = Time.now - 60
       block = Proc.new do |c|
         if Time.now > lasttick

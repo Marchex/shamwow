@@ -10,6 +10,7 @@ module Shamwow
     property :class,        String
     property :type,         String
     property :address,      String, length: 500
+    property :ipaddress,    String, length: 15
     property :polltime,     DateTime
     #
     property :domain,       String, length: 100

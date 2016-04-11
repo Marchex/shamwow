@@ -30,11 +30,13 @@ module Shamwow
         puts "#{l}"
         line = l.chomp
         m = line.match(/^([\*\w\._\-]+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(.*)$/)
-        n = m[1].gsub!(/\.$/,'')
-        o = DnsData.first_or_new({:name => n, :type => m[4] })
-        i = Integer(m[2])
-        o.attributes={ :ttl => i, :class => m[3], :type => m[4], :address => m[5], :polltime => nowtime }
-        @hosts["#{m[4]}--#{n}"] = o
+        # strip the period from the end of the name
+        name = m[1].gsub!(/\.$/,'')
+        address = m[5].gsub!(/\.$/,'')
+        o = DnsData.first_or_new({:name => name, :type => m[4] })
+        ttl = Integer(m[2])
+        o.attributes={ :ttl => ttl, :class => m[3], :type => m[4], :address => address, :polltime => nowtime }
+        @hosts["#{m[4]}--#{name}"] = o
         o.save
       end
     end
@@ -56,17 +58,36 @@ module Shamwow
     def parse_records
       all = DnsData.all
       all.each do |o|
+        # get domain
         o.domain = o.name.match(/^[\w\-_\*]+\.(.+)$/)[1]
+        # make sure name doesn't have an ending period
         n = o.name.gsub(/\.$/,'')
         o.name = n
+        # get class B & C
         if o.type == 'A'
           o.classB = o.address.match(/^(\d{1,3}\.\d{1,3})[\d\.]+/)[1]
           o.classC = o.address.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3})[\d\.]+/)[1]
-
+          o.ipaddress = o.address
+        end
+        if o.type == 'CNAME'
+          # p o
+          # oo = DnsData.first({ :name => o.address, :type => 'A'})
+          # o.ipaddress= oo.address
+          nn = o.address.gsub(/\.$/,'')
+          o.address = nn
         end
         o.save
       end
     end
+
+    def delete_stale_records
+
+    end
+
+    def parse_dns_row
+    end
+
+
   end
 end
 
