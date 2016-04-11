@@ -48,7 +48,8 @@ module Shamwow
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use "jcarter@#{host}", :timeout => 30, :password => $password
+      #      @session.use "jcarter@#{host}", :timeout => 30, :password => $password
+      @session.use host, :timeout => 30, :password => $password, :user => 'jcarter'
     end
 
     def count_hosts
