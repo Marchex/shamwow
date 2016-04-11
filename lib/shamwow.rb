@@ -19,7 +19,7 @@ module Shamwow
     o.string '--from', 'hosts from a file', default: nil
     o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
     o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
-    #o.string '-u', '--user', default: Process.uid
+    o.string '-u', '--user', 'the user to connect to using ssh', default: ENV['USER']
     o.string '-P', '--password', 'read password from args', default: nil
     o.bool '-p', '--askpass', 'read password from stdlin', default: false
     #o.bool '--all', 'poll all known hosts'
@@ -34,6 +34,10 @@ module Shamwow
 
   if opts[:askpass]
     $password = ask("Enter Password:") {|q| q.echo = false }
+  end
+
+  unless opts[:user].nil?
+    $user = opts[:user]
   end
 
   unless opts[:password].nil?

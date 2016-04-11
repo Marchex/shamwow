@@ -41,7 +41,7 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 100
+      @session.concurrent_connections = 250
     end
 
     def add_host(host)
@@ -49,7 +49,7 @@ module Shamwow
       _load_sshdata host
       # setup ssh session
       #      @session.use "jcarter@#{host}", :timeout => 30, :password => $password
-      @session.use host, :timeout => 30, :password => $password, :user => 'jcarter'
+      @session.use host, :timeout => 30, :password => $password, :user => $user
     end
 
     def count_hosts
