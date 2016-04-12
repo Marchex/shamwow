@@ -13,7 +13,7 @@ module Shamwow
     def transfer_zone(domain)
       Net::SSH.start('bumper.sea.marchex.com') do |ssh|
         # capture all stderr and stdout output from a remote process
-        output = ssh.exec!("dig axfr marchex.com")
+        output = ssh.exec!("dig axfr #{domain}")
         output.gsub!(/^(;.*)$/, '')
         output.gsub!(/^\n$/,'')
         output

@@ -3,6 +3,7 @@ require 'shamwow/ssh'
 require 'shamwow/dns'
 require 'shamwow/http'
 require 'shamwow/version'
+require 'shamwow/knife'
 require 'slop'
 require 'highline/import'
 
@@ -26,6 +27,7 @@ module Shamwow
     o.bool '--dns', 'poll dns'
     o.bool '--ssh', 'poll ssh'
     o.bool '--net', 'poll network engineerings website'
+    o.bool '--knife', 'poll knife status'
     o.on '--version', 'print the version' do
       puts Slop::VERSION
       exit
@@ -61,9 +63,9 @@ module Shamwow
 
   if opts.dns?
     dns = Shamwow::Dns.new
-    # out = dns.transfer_zone('marchex.com')
-    # dns.update_records(out)
-    # dns.save_records
+    out = dns.transfer_zone('marchex.com')
+    dns.update_records(out)
+    dns.save_records
     dns.parse_records
 
   end
@@ -86,12 +88,12 @@ module Shamwow
 
   if opts.net?
     h = Shamwow::Http.new
-    # layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
-    # parsed = h.parse_layer1(h.remove_header(layer1))
-    # p parsed.count
-    # h.save_all_layer1
-    #layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
-    layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
+    layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
+    parsed = h.parse_layer1(h.remove_header(layer1))
+    p parsed.count
+    h.save_all_layer1
+    layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
+    #layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
     parsed = h.parse_layer2(h.remove_header(layer2))
     p parsed.count
     h.save_all_layer2
@@ -99,6 +101,13 @@ module Shamwow
     parsed = h.parse_layer3(h.remove_header(layer3))
     p parsed.count
     h.save_all_layer3
+  end
+
+  if opts.knife?
+    k = Shamwow::Knife.new
+    out = k.get_knife_status('bumper.sea.marchex.com')
+    k.parse_json(out)
+
   end
 
 end

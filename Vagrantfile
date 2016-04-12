@@ -72,6 +72,7 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y lsof
     sudo apt-get install -y ruby
     sudo apt-get install -y ruby-dev
+    sudo apt-get install -y openvpn
     sudo gem install bundler
     echo 'alias gg=\'git log --graph --full-history --all --color --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s"\'' >> ~/.bashrc
     sudo echo 'America/Los_Angeles' > /etc/timezone

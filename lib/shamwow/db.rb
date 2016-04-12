@@ -7,6 +7,7 @@ require 'shamwow/db/dnsdata'
 require 'shamwow/db/layer1data'
 require 'shamwow/db/layer2data'
 require 'shamwow/db/layer3data'
+require 'shamwow/db/knifedata'
 require 'data_mapper'
 require 'dm-migrations'
 
