@@ -1,5 +1,6 @@
 require 'shamwow/db'
 require 'net/http'
+require 'json'
 
 module Shamwow
   class Http
@@ -93,5 +94,49 @@ module Shamwow
         o.save
       end
     end
+
+    def parse_zenoss_snmp(text)
+      nowtime = Time.now
+      data = JSON.parse(text)
+      data["nodes"].each do |n|
+        o = SnmpNodeData.first_or_create( { :hostname => n["hostname"]})
+
+        o.attributes={ :snmp_loc  => n["snmp_loc"],
+                       :ip        => n["ip"],
+                       :os_model  => n["os_model"],
+                       :snmp_desc => n["snmp_desc"],
+                       :serial    => n["serial"],
+                       :snmp_name => n["snmp_name"],
+                       :hw_make   => n["hw_make"],
+                       :os_make   => n["os_make"],
+                       :hw_model  => n["hw_model"],
+                       :polltime  => nowtime
+        }
+        o.save
+        ifaces = n["ifaces"]
+        ifaces.each do |k,v|
+          oi = o.snmp_node_iface.first_or_new({ :ifacename => k })
+          oi.attributes= {
+              #:SnmpNodeData_id => o.id,
+              :macaddr => v["macaddr"],
+              :description => v["description"],
+              :speed => v["speed"],
+              :ipaddr => v["ipaddr"],
+              :state => v["state"],
+              :admin_state => v["admin_state"],
+              :type => v["type"],
+              :polltime => nowtime
+          }
+          #o.SnmpNodeIface << oi
+          begin
+            oi.save
+          rescue
+            Shamwow::Ssh._save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{v}")
+          end
+        end
+        o.save
+      end
+    end
   end
 end
+

@@ -8,6 +8,8 @@ require 'shamwow/db/layer1data'
 require 'shamwow/db/layer2data'
 require 'shamwow/db/layer3data'
 require 'shamwow/db/knifedata'
+require 'shamwow/db/snmpnodedata'
+require 'shamwow/db/snmpnodeiface'
 require 'data_mapper'
 require 'dm-migrations'
 
@@ -17,6 +19,7 @@ module Shamwow
     def initialize(dm_conn, debug)
       #DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, dm_conn)
+      DataMapper::Model.raise_on_save_failure = true
       DataMapper.finalize
     end
 
