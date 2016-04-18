@@ -5,11 +5,11 @@ module Shamwow
     include DataMapper::Resource
 
     property :id,                 Serial
-    property :ifacename,          String, :length => 100
+    property :ifacename,          String, :length => 250
     property :macaddr,            String, :length => 20
     property :description,        Text
     property :speed,              String
-    property :ipaddr,             String, :length => 250
+    property :ipaddr,             String, :length => 500
     property :state,              String, :length => 100
     property :admin_state,        String
     property :type,               String

@@ -112,7 +112,12 @@ module Shamwow
                        :hw_model  => n["hw_model"],
                        :polltime  => nowtime
         }
-        o.save
+        begin
+          o.save
+        rescue
+          Shamwow::Ssh._save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{n}")
+        end
+
         ifaces = n["ifaces"]
         ifaces.each do |k,v|
           oi = o.snmp_node_iface.first_or_new({ :ifacename => k })
