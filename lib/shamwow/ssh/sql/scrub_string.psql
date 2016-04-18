@@ -1,2 +1,2 @@
-update shamwow_sshdata_exec_outputs set chef_exec_output = replace(chef_exec_output, 'kittens1', 'REDACTED')
-update shamwow_error_data set message = replace(chef_exec_output, 'kittens1', 'REDACTED')
+update shamwow_sshdata_exec_outputs set chef_exec_output = replace(chef_exec_output, 'kittens123', 'REDACTED');
+update shamwow_error_data set message = replace(message, 'kittens123', 'REDACTED');
