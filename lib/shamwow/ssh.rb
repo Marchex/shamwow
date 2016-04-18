@@ -41,7 +41,7 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 250
+      @session.concurrent_connections = 100
     end
 
     def add_host(host)
@@ -66,7 +66,12 @@ module Shamwow
         end
         c.busy?
       end
+      begin
       @session.loop(15, &block)
+      rescue
+        puts $ERROR_INFO
+      end
+
 
     end
 

@@ -5,7 +5,7 @@ module Shamwow
     include DataMapper::Resource
 
     property :id,                         Serial
-    property :hostname,                   String
+    property :hostname,                   String, :length => 100
     property :os,                         String
     property :os_polltime,                DateTime
     property :chefver,                    String

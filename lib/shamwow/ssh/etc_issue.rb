@@ -15,7 +15,7 @@ module Shamwow; module SshTask; class Etc_issue
 
       end
       {
-          :os => ver,
+          :os => ver[0..49],
           :os_polltime => Time.now
       }
     end
