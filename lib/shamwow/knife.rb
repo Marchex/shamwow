@@ -53,6 +53,9 @@ module Shamwow
       end
     end
 
+    def expire_records
+      KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - 86400)).destroy
+    end
   end
 end
 

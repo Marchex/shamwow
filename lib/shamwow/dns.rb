@@ -6,6 +6,7 @@ module Shamwow
   class Dns
     def initialize
       @hosts = {}
+      @lookup = {}
       @@errors = []
       @@errortypes = {}
     end
@@ -27,17 +28,19 @@ module Shamwow
       nowtime = Time.now
       output.each_line do |l|
         next if l.match(/^\s*$/)
-        puts "#{l}"
         line = l.chomp
         m = line.match(/^([\*\w\._\-]+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(.*)$/)
         # strip the period from the end of the name
-        name = m[1].gsub!(/\.$/,'')
-        address = m[5].gsub!(/\.$/,'')
+        name = m[1].chomp('.')
+        address = m[5].chomp('.')
         o = DnsData.first_or_new({:name => name, :type => m[4] })
         ttl = Integer(m[2])
         o.attributes={ :ttl => ttl, :class => m[3], :type => m[4], :address => address, :polltime => nowtime }
         @hosts["#{m[4]}--#{name}"] = o
-        o.save
+        if o.type == 'A' || o.type == 'CNAME'
+          @lookup[name] = address
+        end
+        foo = "you"
       end
     end
 
@@ -55,39 +58,47 @@ module Shamwow
       end
     end
 
-    def parse_records
-      all = DnsData.all
-      all.each do |o|
-        # get domain
-        o.domain = o.name.match(/^[\w\-_\*]+\.(.+)$/)[1]
-        # make sure name doesn't have an ending period
-        n = o.name.gsub(/\.$/,'')
-        o.name = n
-        # get class B & C
+    def parse_all_records
+      @hosts.each do |k, v|
+        parse_record k,v
+        p k
+        begin
+          v.save
+        rescue
+          p v
+        end
+      end
+    end
+
+    def parse_record(host, o)
+      # get domain
+      o.domain = o.name.match(/^[\w\-_\*]+\.(.+)$/)[1]
+      # make sure name doesn't have an ending period
+      n = o.name.gsub(/\.$/,'')
+      o.name = n
+      # get class B & C
+      begin
         if o.type == 'A'
           o.classB = o.address.match(/^(\d{1,3}\.\d{1,3})[\d\.]+/)[1]
           o.classC = o.address.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3})[\d\.]+/)[1]
           o.ipaddress = o.address
         end
         if o.type == 'CNAME'
-          # p o
-          # oo = DnsData.first({ :name => o.address, :type => 'A'})
-          # o.ipaddress= oo.address
-          nn = o.address.gsub(/\.$/,'')
-          o.address = nn
+          addr = o.address
+          while !addr.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+            break if @lookup[addr].nil?
+            addr = @lookup[addr]
+          end
+          if addr.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+            o.ipaddress= addr
+            o.classB = o.ipaddress.match(/^(\d{1,3}\.\d{1,3})[\d\.]+/)[1]
+            o.classC = o.ipaddress.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3})[\d\.]+/)[1]
+          end
         end
-        o.save
+      rescue
+        p o
       end
     end
-
-    def delete_stale_records
-
-    end
-
-    def parse_dns_row
-    end
-
-
   end
 end
 
