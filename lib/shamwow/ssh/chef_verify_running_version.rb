@@ -2,7 +2,8 @@
 module Shamwow; module SshTask; class Chef_verify_running_version
     #
     def self.command
-      'sudo /usr/bin/lsof -p $(/usr/bin/pgrep -o chef-client)'
+      #'sudo /usr/bin/lsof -p $(/usr/bin/pgrep -o chef-client)'
+      'sudo /usr/sbin/lsof -p $(/usr/bin/pgrep -o chef-client)'
       #'/usr/bin/pgrep chef-client'
       #'sudo ps -ef | grep chef-client'
     end
