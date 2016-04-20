@@ -1,20 +1,21 @@
-with b as (select s.hostname, w.category, max(w.chef_exec_polltime), string_agg(w.chef_exec_output, ' ') as before_output
+with b as (select max(w.id) as id, s.hostname, w.category
            from public.shamwow_ssh_data s
              join public.shamwow_sshdata_exec_outputs w on s.id = w.ssh_data_id
            where w.category like '11%'
              and w.chef_exec_polltime > localtimestamp - interval '1 day'
-           group by s.hostname, w.category
-           order by s.hostname desc),
-    a as (select s.hostname, w.category, min(w.chef_exec_polltime) as atime, string_agg(w.chef_exec_output, ' ') as after_output
+           group by s.hostname, w.category),
+    a as (select max(w.id) as id, s.hostname, w.category
           from public.shamwow_ssh_data s
             join public.shamwow_sshdata_exec_outputs w on s.id = w.ssh_data_id
           where w.category = '12.6.0'
                 and w.chef_exec_polltime > localtimestamp - interval '1 day'
-          group by s.hostname, w.category
-          order by s.hostname desc)
-select a.atime, b.hostname, b.before_output, a.after_output
-from b
-  join a on b.hostname = a.hostname
-  where b.before_output like '%ERROR%' OR
-    a.after_output like '%ERROR%'
-order by a.atime desc
+          group by s.hostname, w.category),
+    j as (select b.hostname,
+            (select chef_exec_polltime from shamwow_sshdata_exec_outputs where id = a.id) as atime,
+            (select chef_exec_output from shamwow_sshdata_exec_outputs where id = b.id) as before_upgrade,
+            (select chef_exec_output from shamwow_sshdata_exec_outputs where id = a.id) as after_upgrade
+          from b
+            join a on b.hostname = a.hostname)
+    select * from j
+  where --before_upgrade not like '%Chef Client finished%' OR
+    after_upgrade not like '%Chef Client finished%';

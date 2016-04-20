@@ -66,7 +66,7 @@ module Shamwow
     out = dns.transfer_zone('marchex.com')
     dns.update_records(out)
     dns.save_records
-    dns.parse_records
+    dns.parse_all_records
 
   end
 
@@ -97,10 +97,10 @@ module Shamwow
     # parsed = h.parse_layer2(h.remove_header(layer2))
     # p parsed.count
     # h.save_all_layer2
-    # layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
-    # parsed = h.parse_layer3(h.remove_header(layer3))
-    # p parsed.count
-    # h.save_all_layer3
+    layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
+    parsed = h.parse_layer3(h.remove_header(layer3))
+    p parsed.count
+    h.save_all_layer3
     snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
     h.parse_zenoss_snmp(snmpdata)
   end
@@ -109,7 +109,7 @@ module Shamwow
     k = Shamwow::Knife.new
     out = k.get_knife_status('bumper.sea.marchex.com')
     k.parse_json(out)
-
+    k.expire_records
   end
 
 end
