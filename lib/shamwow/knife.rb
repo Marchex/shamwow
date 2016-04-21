@@ -53,8 +53,10 @@ module Shamwow
       end
     end
 
-    def expire_records
-      KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - 86400)).destroy
+    def expire_records(expire_time)
+      stale = KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} Knife status records"
+      stale.destroy
     end
   end
 end
