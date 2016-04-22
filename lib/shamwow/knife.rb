@@ -12,7 +12,7 @@ module Shamwow
     end
 
     def get_knife_status(fromhost)
-      Net::SSH.start(fromhost) do |ssh|
+      Net::SSH.start(fromhost, $user) do |ssh|
         # capture all stderr and stdout output from a remote process
         output = ssh.exec!("knife status -F json 'fqdn:*'")
         output.gsub!(/^(;.*)$/, '')
