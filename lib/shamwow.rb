@@ -110,9 +110,11 @@ module Shamwow
 
   if opts.knife?
     k = Shamwow::Knife.new
-    out = k.get_knife_status('bumper.sea.marchex.com')
-    k.parse_json(out)
-    k.expire_records($expire_time)
+    # out = k.get_status('bumper.sea.marchex.com')
+    # k.parse_status(out)
+    out = k.get_knife_cookbooks('bumper.sea.marchex.com')
+    k.parse_cookbooks(out)
+    #k.expire_records($expire_time)
   end
 
 end

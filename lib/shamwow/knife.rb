@@ -11,17 +11,13 @@ module Shamwow
       @@errortypes = {}
     end
 
-    def get_knife_status(fromhost)
+    def get_status(fromhost)
       Net::SSH.start(fromhost, $user) do |ssh|
-        # capture all stderr and stdout output from a remote process
-        output = ssh.exec!("knife status -F json 'fqdn:*'")
-        output.gsub!(/^(;.*)$/, '')
-        output.gsub!(/^\n$/,'')
-        output
+        ssh.exec!("knife status -F json 'fqdn:*'")
       end
     end
 
-    def parse_json(output)
+    def parse_status(output)
       nowtime = Time.now
       data = JSON.parse(output)
       data.each do |n|
@@ -39,8 +35,43 @@ module Shamwow
       end
     end
 
+    def get_knife_cookbooks(fromhost)
+      Net::SSH.start(fromhost, $user) do |ssh|
+        ssh.exec!("knife search node 'fqdn:pulley*' -a cookbooks -Fj")
+      end
+    end
+    # {
+    #     "results": 1,
+    #     "rows": [
+    #       {
+    #           "pulleyserver1.sea1.marchex.com": {
+    #             "cookbooks": {
+    #                 "apt": {
+    #                   "version": "1.9.0"
+    #                 }
+    def parse_cookbooks(output)
+      nowtime = Time.now
+      data = JSON.parse(output)
+      data["rows"].each do |hash|
+        (name, obj) = hash.first
+        next if obj["cookbooks"].nil?
+        o = KnifeData.first_or_new( { :name => name })
+        obj["cookbooks"].each do |ckbk, attrs|
+          c = o.cookbooks.first_or_new({ :name => ckbk })
+          c.attributes = {
+              :version => attrs["version"],
+              :polltime => nowtime
+          }
+          c.save
+        end
+        o.attributes = { :polltime => nowtime }
+        o.save
+      end
+    end
+
+
     def get_records
-      nodes
+      @nodes
     end
 
     def save_records
