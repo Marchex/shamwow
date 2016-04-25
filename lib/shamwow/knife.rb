@@ -63,7 +63,7 @@ module Shamwow
           }
           cb.save
           c = o.knife_ckbk_links.first_or_new({ :knife_id => o.id, :ckbk_id => cb.id })
-
+          c.attributes = { :polltime => newtime }
         end
         o.attributes = { :polltime => nowtime }
         o.save
