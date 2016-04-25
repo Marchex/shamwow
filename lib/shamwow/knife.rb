@@ -11,17 +11,13 @@ module Shamwow
       @@errortypes = {}
     end
 
-    def get_knife_status(fromhost)
-      Net::SSH.start(fromhost) do |ssh|
-        # capture all stderr and stdout output from a remote process
-        output = ssh.exec!("knife status -F json 'fqdn:*'")
-        output.gsub!(/^(;.*)$/, '')
-        output.gsub!(/^\n$/,'')
-        output
+    def get_status(fromhost)
+      Net::SSH.start(fromhost, $user) do |ssh|
+        ssh.exec!("knife status -F json 'fqdn:*'")
       end
     end
 
-    def parse_json(output)
+    def parse_status(output)
       nowtime = Time.now
       data = JSON.parse(output)
       data.each do |n|
@@ -39,8 +35,44 @@ module Shamwow
       end
     end
 
+    def get_cookbooks(fromhost)
+      Net::SSH.start(fromhost, $user) do |ssh|
+        ssh.exec!("knife search node 'fqdn:*' -a cookbooks -Fj")
+      end
+    end
+    # {
+    #     "results": 1,
+    #     "rows": [
+    #       {
+    #           "pulleyserver1.sea1.marchex.com": {
+    #             "cookbooks": {
+    #                 "apt": {
+    #                   "version": "1.9.0"
+    #                 }
+    def parse_cookbooks(output)
+      nowtime = Time.now
+      data = JSON.parse(output)
+      data["rows"].each do |hash|
+        (name, obj) = hash.first
+        next if obj["cookbooks"].nil?
+        o = KnifeData.first_or_new( { :name => name })
+        obj["cookbooks"].each do |ckbk, attrs|
+          cb = KnifeCkbk.first_or_new({ :name => ckbk, :version => attrs["version"] })
+          cb.attributes = {
+              :polltime => nowtime
+          }
+          cb.save
+          c = o.knife_ckbk_links.first_or_new({ :knife_id => o.id, :ckbk_id => cb.id })
+
+        end
+        o.attributes = { :polltime => nowtime }
+        o.save
+      end
+    end
+
+
     def get_records
-      nodes
+      @nodes
     end
 
     def save_records
@@ -53,8 +85,10 @@ module Shamwow
       end
     end
 
-    def expire_records
-      KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - 86400)).destroy
+    def expire_records(expire_time)
+      stale = KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} Knife status records"
+      stale.destroy
     end
   end
 end

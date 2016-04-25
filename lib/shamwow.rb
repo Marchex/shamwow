@@ -10,7 +10,7 @@ require 'highline/import'
 
 module Shamwow
   testlist = []
-
+  $expire_time = 7200
   opts = Slop.parse do |o|
     o.on '-h', '--help' do
       puts 'HELP!'
@@ -67,7 +67,7 @@ module Shamwow
     dns.update_records(out)
     dns.save_records
     dns.parse_all_records
-
+    dns.expire_records($expire_time)
   end
 
   if opts.ssh?
@@ -101,15 +101,20 @@ module Shamwow
     parsed = h.parse_layer3(h.remove_header(layer3))
     p parsed.count
     h.save_all_layer3
-    snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
-    h.parse_zenoss_snmp(snmpdata)
+    h.expire_l3_records($expire_time)
+    #
+    # snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
+    # h.parse_zenoss_snmp(snmpdata)
+    # h.expire_snmp_records($expire_time)
   end
 
   if opts.knife?
     k = Shamwow::Knife.new
-    out = k.get_knife_status('bumper.sea.marchex.com')
-    k.parse_json(out)
-    k.expire_records
+    # out = k.get_status('bumper.sea.marchex.com')
+    # k.parse_status(out)
+    out = k.get_cookbooks('bumper.sea.marchex.com')
+    k.parse_cookbooks(out)
+    #k.expire_records($expire_time)
   end
 
 end

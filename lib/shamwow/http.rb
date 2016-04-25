@@ -42,6 +42,12 @@ module Shamwow
       end
     end
 
+    def expire_l1_records(expire_time)
+      stale = Layer1Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} Layer1 records"
+      stale.destroy
+    end
+
     def parse_layer2(data)
       data.each_line do |l|
         next if l.match(/^\s*$/)
@@ -66,6 +72,12 @@ module Shamwow
         o.attributes= { :macprefix => prefix, :vlan => m[4], :polltime => polltime }
         o.save
       end
+    end
+
+    def expire_l2_records(expire_time)
+      stale = Layer2Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} Layer2 records"
+      stale.destroy
     end
 
     def parse_layer3(data)
@@ -93,6 +105,12 @@ module Shamwow
         o.attributes= {  :macprefix => prefix, :rdns => m[5], :polltime => polltime }
         o.save
       end
+    end
+
+    def expire_l3_records(expire_time)
+      stale = Layer3Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} Layer3 records"
+      stale.destroy
     end
 
     def parse_zenoss_snmp(text)
@@ -141,6 +159,11 @@ module Shamwow
         end
         o.save
       end
+    end
+
+    def expire_snmp_records(expire_time)
+      SnmpNodeIface.all(:polltime.lt => Time.at(Time.now.to_i - expire_time)).destroy
+      SnmpNodeData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time)).destroy
     end
   end
 end

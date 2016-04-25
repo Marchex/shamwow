@@ -12,7 +12,7 @@ module Shamwow
     end
 
     def transfer_zone(domain)
-      Net::SSH.start('bumper.sea.marchex.com') do |ssh|
+      Net::SSH.start('bumper.sea.marchex.com', $user) do |ssh|
         # capture all stderr and stdout output from a remote process
         output = ssh.exec!("dig axfr #{domain}")
         output.gsub!(/^(;.*)$/, '')
@@ -40,7 +40,6 @@ module Shamwow
         if o.type == 'A' || o.type == 'CNAME'
           @lookup[name] = address
         end
-        foo = "you"
       end
     end
 
@@ -61,12 +60,7 @@ module Shamwow
     def parse_all_records
       @hosts.each do |k, v|
         parse_record k,v
-        p k
-        begin
-          v.save
-        rescue
-          p v
-        end
+        v.save
       end
     end
 
@@ -90,14 +84,20 @@ module Shamwow
             addr = @lookup[addr]
           end
           if addr.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
-            o.ipaddress= addr
+            o.ipaddress = addr
             o.classB = o.ipaddress.match(/^(\d{1,3}\.\d{1,3})[\d\.]+/)[1]
             o.classC = o.ipaddress.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3})[\d\.]+/)[1]
           end
         end
       rescue
-        p o
+        puts "#{Time.now}--#{host}: parse_record: Exception #{$ERROR_INFO}"
       end
+    end
+
+    def expire_records(expire_time)
+      stale = DnsData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      puts "#{Time.now} Expiring #{stale.count} DNS records"
+      stale.destroy
     end
   end
 end
