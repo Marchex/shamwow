@@ -112,7 +112,7 @@ module Shamwow
     k = Shamwow::Knife.new
     # out = k.get_status('bumper.sea.marchex.com')
     # k.parse_status(out)
-    out = k.get_knife_cookbooks('bumper.sea.marchex.com')
+    out = k.get_cookbooks('bumper.sea.marchex.com')
     k.parse_cookbooks(out)
     #k.expire_records($expire_time)
   end

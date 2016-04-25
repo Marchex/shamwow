@@ -35,9 +35,9 @@ module Shamwow
       end
     end
 
-    def get_knife_cookbooks(fromhost)
+    def get_cookbooks(fromhost)
       Net::SSH.start(fromhost, $user) do |ssh|
-        ssh.exec!("knife search node 'fqdn:pulley*' -a cookbooks -Fj")
+        ssh.exec!("knife search node 'fqdn:*' -a cookbooks -Fj")
       end
     end
     # {
@@ -57,12 +57,13 @@ module Shamwow
         next if obj["cookbooks"].nil?
         o = KnifeData.first_or_new( { :name => name })
         obj["cookbooks"].each do |ckbk, attrs|
-          c = o.cookbooks.first_or_new({ :name => ckbk })
-          c.attributes = {
-              :version => attrs["version"],
+          cb = KnifeCkbk.first_or_new({ :name => ckbk, :version => attrs["version"] })
+          cb.attributes = {
               :polltime => nowtime
           }
-          c.save
+          cb.save
+          c = o.knife_ckbk_links.first_or_new({ :knife_id => o.id, :ckbk_id => cb.id })
+
         end
         o.attributes = { :polltime => nowtime }
         o.save
