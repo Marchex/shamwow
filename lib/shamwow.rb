@@ -9,7 +9,7 @@ require 'highline/import'
 
 
 module Shamwow
-  testlist = []
+  testlist = {}
   $expire_time = 7200
   opts = Slop.parse do |o|
     o.on '-h', '--help' do
@@ -18,6 +18,7 @@ module Shamwow
     end
     o.string '--host', 'run on a hostname', default: nil
     o.string '--from', 'hosts from a file', default: nil
+    o.bool   '--fromdb', 'hosts from hsots table', default: false
     o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
     o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
     o.string '-u', '--user', 'the user to connect to using ssh', default: ENV['USER']
@@ -47,18 +48,27 @@ module Shamwow
   end
 
   unless opts[:host].nil?
-    testlist.push opts[:host]
+    testlist[opts[:host]] = true
   end
 
   unless opts[:from].nil?
     fh = File.open opts[:from], 'r'
     fh.each_line do |line|
-      testlist.push(line.strip)
+      testlist[line.strip] = true
     end
   end
 
   db = Shamwow::Db.new(opts[:connection], true)
   db.bootstrap_db
+
+  unless opts[:fromdb].nil?
+    enabled = Host.all
+    enabled.each do |e|
+      testlist[e[:hostname]] = e[:ssh_scan]
+    end
+  end
+
+
 
   if opts.dns?
     dns = Shamwow::Dns.new
@@ -81,10 +91,11 @@ module Shamwow
     ssh = Shamwow::Ssh.new(db)
     ssh.create_session
 
-    testlist.each do |line|
-      stripped = line.strip
-
-      ssh.add_host(stripped)
+    testlist.each do |line, enabled|
+      if enabled
+        stripped = line.strip
+        ssh.add_host(stripped)
+      end
     end
 
     puts "#{Time.now}-session count #{ssh.count_hosts}"
