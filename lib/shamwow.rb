@@ -99,11 +99,14 @@ module Shamwow
     parsed = h.parse_layer1(h.remove_header(layer1))
     puts "Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
+    h.expire_l1_records($expire_time)
+    #
     layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
     parsed = h.parse_layer2(h.remove_header(layer2))
     puts "Layer 2 record count: #{parsed.count}"
     h.save_all_layer2
     h.expire_l2_records($expire_time)
+    #
     layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
     parsed = h.parse_layer3(h.remove_header(layer3))
     puts "Layer 3 record count: #{parsed.count}"
