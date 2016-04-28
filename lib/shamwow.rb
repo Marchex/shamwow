@@ -58,7 +58,6 @@ module Shamwow
   end
 
   db = Shamwow::Db.new(opts[:connection], true)
-  #db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
   db.bootstrap_db
 
   if opts.dns?
@@ -79,7 +78,7 @@ module Shamwow
   end
 
   if opts.ssh?
-    ssh = Shamwow::Ssh.new
+    ssh = Shamwow::Ssh.new(db)
     ssh.create_session
 
     testlist.each do |line|
@@ -95,13 +94,12 @@ module Shamwow
   end
 
   if opts.net?
-    h = Shamwow::Http.new
+    h = Shamwow::Http.new(db)
     layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
     parsed = h.parse_layer1(h.remove_header(layer1))
     puts "Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
     layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
-    #layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
     parsed = h.parse_layer2(h.remove_header(layer2))
     puts "Layer 2 record count: #{parsed.count}"
     h.save_all_layer2
@@ -118,7 +116,7 @@ module Shamwow
   end
 
   if opts.knife?
-    k = Shamwow::Knife.new
+    k = Shamwow::Knife.new(db)
     k.load_data
     out = k.get_status('bumper.sea.marchex.com')
     k.parse_status(out)
@@ -127,4 +125,5 @@ module Shamwow
     k.expire_records($expire_time)
   end
 
+  db.finalize
 end

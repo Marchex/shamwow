@@ -5,15 +5,13 @@ require 'json'
 
 module Shamwow
   class Knife
-    def initialize
+    def initialize(db)
+      @db = db
       @nodes = {}
       @cookbooks = {}
       @ckbklinks = {}
       @runlists = {}
       @rllinks = {}
-
-      @@errors = []
-      @@errortypes = {}
     end
 
     def get_status(fromhost)
@@ -95,10 +93,6 @@ module Shamwow
     def save_records
       nodes.each_value do |o|
         o.save
-      end
-
-      @@errortypes.each do |type, count|
-        puts "Error type: #{type}: #{count}"
       end
     end
 
