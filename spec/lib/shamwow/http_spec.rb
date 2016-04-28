@@ -21,7 +21,7 @@ describe 'Http' do
     # Assert
     expect(result).to eq("a01-tor-a.som1.marchex.com: mgt up MGT \n")
   end
-  
+
   it 'should parse netools layer1 data' do
     #
     # arrange

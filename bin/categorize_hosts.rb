@@ -4,7 +4,7 @@ require 'rubygems'
 require 'shamwow/db'
 
 module Shamwow
-  db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
+  db = Shamwow::Db.new('postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow', true)
   db.bootstrap_db
   patterns = {}
   products = Products.all
@@ -20,8 +20,15 @@ module Shamwow
   end
   puts patterns.count
   sshhosts.each do |sshhost|
+    begin
     host = Host.first_or_create({ :hostname => sshhost[:hostname]})
+    rescue
+      db.save_error(sshhost[:hostname], 'categorize_hosts::create_host', sshhost)
+
+    end
+
     name = host[:hostname]
+    host[:ssh_lastseen] = sshhost[:chefver_polltime]
     case
       when name.match(/devint/) || name.match(/^di\-/)
         host[:environment] = 'dev-int'
@@ -45,6 +52,11 @@ module Shamwow
         host[:product] = v
       end
     end
+    begin
     host.save
+    rescue
+      db.save_error(host[:hostname], 'categorize_hosts::save', host)
+    end
   end
+  db.finalize
 end

@@ -1,4 +1,4 @@
-require 'shamwow/db/node'
+require 'shamwow/db/hosts'
 require 'shamwow/db/sshdata'
 require 'shamwow/db/errordata'
 require 'shamwow/db/sshdata_exec_output'
