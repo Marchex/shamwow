@@ -7,7 +7,7 @@ module Shamwow
     property :ethswitch,          String,   :key => true
     property :interface,          String,   :key => true
     property :linkstate,          String
-    property :description,        String
+    property :description,        String,   :length => 150
     property :polltime,           DateTime
 
     #has n, :sshdata_exec_output

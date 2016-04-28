@@ -11,7 +11,8 @@ describe 'Http' do
   it 'should remove the header line' do
     #
     # Arrange
-    h = Shamwow::Http.new
+    db = double('Shamwow::Db')
+    h = Shamwow::Http.new(db)
     allow(Time).to receive(:now).and_return(@time_now)
     #
     # # Act
@@ -20,11 +21,12 @@ describe 'Http' do
     # Assert
     expect(result).to eq("a01-tor-a.som1.marchex.com: mgt up MGT \n")
   end
-
+  
   it 'should parse netools layer1 data' do
     #
     # arrange
-    h = Shamwow::Http.new
+    db = double('Shamwow::Db')
+    h = Shamwow::Http.new(db)
     #
     # act
     result = h.parse_layer1("a01-tor-a.som1.marchex.com: mgt up MGT
@@ -32,21 +34,36 @@ a01-tor-a.som1.marchex.com: port10 up r630a0101_s2_data
 a01-tor-a.som1.marchex.com: port11 up r630a0102_s1_stor
 as1-a01-admin.som1.marchex.com: gi0/10 up r630a0101_ipmi
 as1-a01-admin.som1.marchex.com: gi0/10 up
+phl02as04a.phl1.marchex.com: gi0/25 down RSPAN destination interface : Link to phl02asRSPAN
+sad01cr01-01.sad.marchex.com: gi10/3 up *UP-LINK Spectrum:sea02cs18a:Gi0/13:CircuitID-SID-4216
+sad01cs02.sad.marchex.com: gi3/25 up \"to br2.sea1 ge-1/3/9 via pp15 for zayo e-wan vlan 937 SOM1 to SAD\"
+sea02cs18a.sea.marchex.com: gi0/13 up *UP-LINK SPECTRUM:sad01cr01-01:Gi10 /3:Cir-ID-SID-4216
+sea02cs18a.sea.marchex.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
+sea02cs18b.sea.marchex.com: gi0/13 up *UP-LINK INTEGRA:sad01cr01-02:Gi10 /2:Cir-ID:ELKFED758894INTG
+sea02cs18b.sea.marchex.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
 ")
     #
     # asset
-    expect(result.count).to eq(5)
+    expect(result.count).to eq(12)
     expect(result[0]).not_to eq(nil)
     expect(result[1]).not_to eq(nil)
     expect(result[2]).not_to eq(nil)
     expect(result[3]).not_to eq(nil)
     expect(result[4]).not_to eq(nil)
+    expect(result[5]).not_to eq(nil)
+    expect(result[6]).not_to eq(nil)
+    expect(result[7]).not_to eq(nil)
+    expect(result[8]).not_to eq(nil)
+    expect(result[9]).not_to eq(nil)
+    expect(result[10]).not_to eq(nil)
+    expect(result[11]).not_to eq(nil)
   end
 
   it 'should parse netools layer2 data' do
     #
     # arrange
-    h = Shamwow::Http.new
+    db = double('Shamwow::Db')
+    h = Shamwow::Http.new(db)
     #
     # act
     result = h.parse_layer2(h.remove_header("[ETHSWITCH]: [LOCALINTERFACE] [MACADDRESS] v[VLANID] 		7101 uniqe records
