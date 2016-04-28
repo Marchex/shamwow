@@ -31,7 +31,7 @@ module Shamwow
       data = JSON.parse(output)
       data.each do |n|
         #p n
-        o = KnifeData.first_or_new( { :name => n["name"] })
+        o = @nodes.first_or_new( { :name => n["name"] })
 
         o.attributes={ :chefenv => n["chef_environment"],
                        :ip => n["ip"],
@@ -65,10 +65,10 @@ module Shamwow
         (name, obj) = hash.first
         next if obj["cookbooks"].nil?
 
-        o = KnifeData.first_or_new( { :name => name })
+        o = @nodes.first_or_new( { :name => name })
 
         obj["cookbooks"].each do |ckbk, attrs|
-          cb = KnifeCkbk.first_or_new({ :name => ckbk, :version => attrs["version"] })
+          cb = @cookbooks.first_or_new({ :name => ckbk, :version => attrs["version"] })
           cb.attributes = {
               :polltime => nowtime
           }
@@ -97,13 +97,13 @@ module Shamwow
     end
 
     def expire_records(expire_time)
-      stale = KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      stale = @nodes.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeData records"
       stale.destroy
-      stale = KnifeCkbk.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      stale = @cookbooks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeCkbk records"
       stale.destroy
-      stale = KnifeCkbkLink.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      stale = @ckbklinks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeCkbkLink records"
       stale.destroy
     end
