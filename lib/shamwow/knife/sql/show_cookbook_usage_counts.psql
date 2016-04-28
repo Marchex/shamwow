@@ -1,0 +1,5 @@
+select name, version, count (*)
+from shamwow_knife_ckbks cb
+join shamwow_knife_ckbk_links l on l.ckbk_id = cb.id
+group by name, version
+order by count desc

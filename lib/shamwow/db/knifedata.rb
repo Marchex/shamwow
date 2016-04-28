@@ -16,8 +16,9 @@ module Shamwow
   class KnifeCkbkLink
     include DataMapper::Resource
 
-    belongs_to :knife, 'KnifeData', :key => true
-    belongs_to :ckbk, 'KnifeCkbk', :key => true
+    belongs_to  :knife, 'KnifeData',  :key => true
+    belongs_to  :ckbk,  'KnifeCkbk',  :key => true
+    property    :polltime,            DateTime
   end
 
   class KnifeData

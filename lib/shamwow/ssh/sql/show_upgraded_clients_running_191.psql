@@ -1,10 +1,10 @@
 with a as (select s.hostname, max(e.id) as exec_id
-from shamwow_ssh_data s
-      join shamwow_sshdata_exec_outputs e on e.ssh_data_id = s.id
-where s.chefver like '12%' and e.category = 'verify_running_version'
-group by s.hostname)
+                                 from shamwow_ssh_data s
+                                       join shamwow_sshdata_exec_outputs e on e.ssh_data_id = s.id
+                                 where e.category = 'verify_running_version'
+                                 group by s.hostname)
 select hostname, exec_id, ee.chef_exec_polltime, ee.chef_exec_output
 from a
-join shamwow_sshdata_exec_outputs ee on ee.id = exec_id
-where ee.chef_exec_output like '%ruby/1.9.1%'
+      join shamwow_sshdata_exec_outputs ee on ee.id = exec_id
+where ee.chef_exec_output like '%ruby/1.9.1%' and ee.chef_exec_polltime > localtimestamp - INTERVAL '1 day'
 order by exec_id desc;
