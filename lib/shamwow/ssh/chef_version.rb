@@ -9,11 +9,11 @@ module Shamwow; module SshTask; class Chef_version
     #   ffi-yajl/json_gem is deprecated, these monkeypatches will be dropped shortly
     #   Chef: 11.16.4
 
-    def self.parse(host, data)
+    def self.parse(host, data, db)
       begin
         ver = data.match(/Chef: ([\w\.]+)/)[1]
       rescue
-        Shamwow::Ssh._save_error(host, 'SshTask::Chef_version', "#{$ERROR_INFO} #{data}")
+        db.save_error(host, 'SshTask::Chef_version', "#{$ERROR_INFO} #{data}")
       end
 
       {

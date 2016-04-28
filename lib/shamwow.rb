@@ -95,6 +95,8 @@ module Shamwow
       if enabled
         stripped = line.strip
         ssh.add_host(stripped)
+      else
+        puts "skipping host: #{line}"
       end
     end
 

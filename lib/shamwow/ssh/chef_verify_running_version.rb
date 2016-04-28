@@ -11,11 +11,11 @@ module Shamwow; module SshTask; class Chef_verify_running_version
     #   chef-clie 27653 root  txt    REG  202,1     12031 6033542 /opt/chef/embedded/bin/ruby
     #   Chef: 12.5.1
 
-    def self.parse(host, data)
+    def self.parse(host, data, db)
       begin
         rubysize = data.match(/\s+(\d+)\s+\d+\s+\/opt\/chef\/embedded\/bin\/ruby/)[1]
       rescue
-        Shamwow::Ssh._save_error(host, 'SshTask::Chef_verify_running_version/embedded_size', "#{$ERROR_INFO} #{data}")
+        db.save_error(host, 'SshTask::Chef_verify_running_version/embedded_size', "#{$ERROR_INFO} #{data}")
       end
 
       {

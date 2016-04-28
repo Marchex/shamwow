@@ -7,11 +7,11 @@ module Shamwow; module SshTask; class Etc_issue
     #
     # commoon output from command
 
-    def self.parse(host, data)
+    def self.parse(host, data, db)
       begin
         ver = data.gsub(/(\\\w)/, '').gsub(/^Kernel.*$/,'').strip
       rescue
-        Shamwow::Ssh._save_error(host, 'SshTask::Etc_issue/ver', "#{$ERROR_INFO} #{data}")
+        db.save_error(host, 'SshTask::Etc_issue/ver', "#{$ERROR_INFO} #{data}")
 
       end
       {
