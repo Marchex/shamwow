@@ -38,7 +38,12 @@ module Shamwow
       @layer1.each do |m|
         o = Layer1Data.first_or_create({:ethswitch => m[1], :interface => m[2]})
         o.attributes= { :linkstate => m[3], :description => m[4], :polltime => polltime }
-        o.save
+        begin
+          o.save
+        rescue
+          Shamwow::Ssh._save_error("#{m[1] + m[2]}", 'Http::save_all_layer1', "#{$ERROR_INFO} #{n}")
+        end
+
       end
     end
 
@@ -70,7 +75,11 @@ module Shamwow
         o = Layer2Data.first_or_create({:ethswitch => m[1], :interface => m[2], :macaddress => m[3]})
         prefix = m[3][0..5]
         o.attributes= { :macprefix => prefix, :vlan => m[4], :polltime => polltime }
-        o.save
+        begin
+          o.save
+        rescue
+          Shamwow::Ssh._save_error("#{m[1] + m[2] + m[3]}", 'Http::save_all_layer2', "#{$ERROR_INFO} #{n}")
+        end
       end
     end
 
@@ -103,7 +112,11 @@ module Shamwow
         o = Layer3Data.first_or_create({:ipgateway => m[1], :port => m[2], :macaddress => m[3], :ipaddress => m[4]})
         prefix = m[3][0..5]
         o.attributes= {  :macprefix => prefix, :rdns => m[5], :polltime => polltime }
-        o.save
+        begin
+          o.save
+        rescue
+          Shamwow::Ssh._save_error(m[4], 'Http::save_all_layer3', "#{$ERROR_INFO} #{m}")
+        end
       end
     end
 
