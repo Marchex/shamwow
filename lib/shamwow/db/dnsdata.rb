@@ -5,7 +5,7 @@ module Shamwow
     include DataMapper::Resource
 
     property :id,           Serial
-    property :name,         String
+    property :name,         String, length: 250
     property :ttl,          Integer
     property :class,        String
     property :type,         String

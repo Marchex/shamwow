@@ -11,8 +11,8 @@ module Shamwow
       @@errortypes = {}
     end
 
-    def transfer_zone(domain)
-      Net::SSH.start('bumper.sea.marchex.com', $user) do |ssh|
+    def transfer_zone(host, domain)
+      Net::SSH.start(host, $user) do |ssh|
         # capture all stderr and stdout output from a remote process
         output = ssh.exec!("dig axfr #{domain}")
         output.gsub!(/^(;.*)$/, '')
@@ -49,7 +49,12 @@ module Shamwow
 
     def save_records
       @hosts.each_value do |o|
-        o.save
+        begin
+          o.save
+        rescue
+          puts "#{Time.now}--#{o}: save_record: Exception #{$ERROR_INFO}"
+        end
+
       end
 
       @@errortypes.each do |type, count|

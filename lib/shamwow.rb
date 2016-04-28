@@ -63,7 +63,15 @@ module Shamwow
 
   if opts.dns?
     dns = Shamwow::Dns.new
-    out = dns.transfer_zone('marchex.com')
+    out = dns.transfer_zone('bumper.sea.marchex.com', 'marchex.com')
+    dns.update_records(out)
+    out = dns.transfer_zone('ns2.aws-us-west-2-vpc4.marchex.com', 'aws-us-west-2-vpc4.marchex.com')
+    dns.update_records(out)
+    out = dns.transfer_zone('ns2.aws-us-east-1-vpc3.marchex.com', 'aws-us-east-1-vpc3.marchex.com')
+    dns.update_records(out)
+    out = dns.transfer_zone('ns2.aws-us-east-1-vpc1.marchex.com', 'aws-us-east-1-vpc1.marchex.com')
+    dns.update_records(out)
+    out = dns.transfer_zone('ns2.aws-us-west-2-vpc2.marchex.com', 'aws-us-west-2-vpc2.marchex.com')
     dns.update_records(out)
     dns.save_records
     dns.parse_all_records
@@ -88,33 +96,35 @@ module Shamwow
 
   if opts.net?
     h = Shamwow::Http.new
-    # layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
-    # parsed = h.parse_layer1(h.remove_header(layer1))
-    # p parsed.count
-    # h.save_all_layer1
-    # layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
-    # #layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
-    # parsed = h.parse_layer2(h.remove_header(layer2))
-    # p parsed.count
-    # h.save_all_layer2
+    layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
+    parsed = h.parse_layer1(h.remove_header(layer1))
+    puts "Layer 1 record count: #{parsed.count}"
+    h.save_all_layer1
+    layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
+    #layer2 = h.get('http://netools.sad.marchex.com/report/tmp/eb/mchx.mac-address-tables.txt.edge.20160408-1244')
+    parsed = h.parse_layer2(h.remove_header(layer2))
+    puts "Layer 2 record count: #{parsed.count}"
+    h.save_all_layer2
+    h.expire_l2_records($expire_time)
     layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
     parsed = h.parse_layer3(h.remove_header(layer3))
-    p parsed.count
+    puts "Layer 3 record count: #{parsed.count}"
     h.save_all_layer3
     h.expire_l3_records($expire_time)
     #
-    # snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
-    # h.parse_zenoss_snmp(snmpdata)
-    # h.expire_snmp_records($expire_time)
+    snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
+    h.parse_zenoss_snmp(snmpdata)
+    h.expire_snmp_records($expire_time)
   end
 
   if opts.knife?
     k = Shamwow::Knife.new
-    # out = k.get_status('bumper.sea.marchex.com')
-    # k.parse_status(out)
+    k.load_data
+    out = k.get_status('bumper.sea.marchex.com')
+    k.parse_status(out)
     out = k.get_cookbooks('bumper.sea.marchex.com')
     k.parse_cookbooks(out)
-    #k.expire_records($expire_time)
+    k.expire_records($expire_time)
   end
 
 end
