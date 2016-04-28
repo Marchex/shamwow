@@ -4,7 +4,8 @@ require 'json'
 
 module Shamwow
   class Http
-    def initialize
+    def initialize(db)
+      @db = db
       @layer1 = []
       @layer2 = []
       @layer3 = []
@@ -41,7 +42,7 @@ module Shamwow
         begin
           o.save
         rescue
-          Shamwow::Ssh._save_error("#{m[1] + m[2]}", 'Http::save_all_layer1', "#{$ERROR_INFO} #{n}")
+          @db.save_error("#{m[1] + m[2]}", 'Http::save_all_layer1', "#{$ERROR_INFO} #{m}")
         end
 
       end
@@ -78,7 +79,7 @@ module Shamwow
         begin
           o.save
         rescue
-          Shamwow::Ssh._save_error("#{m[1] + m[2] + m[3]}", 'Http::save_all_layer2', "#{$ERROR_INFO} #{n}")
+          @db.save_error("#{m[1] + m[2] + m[3]}", 'Http::save_all_layer2', "#{$ERROR_INFO} #{m}")
         end
       end
     end
@@ -115,7 +116,7 @@ module Shamwow
         begin
           o.save
         rescue
-          Shamwow::Ssh._save_error(m[4], 'Http::save_all_layer3', "#{$ERROR_INFO} #{m}")
+          @db.save_error(m[4], 'Http::save_all_layer3', "#{$ERROR_INFO} #{m}")
         end
       end
     end
@@ -146,7 +147,7 @@ module Shamwow
         begin
           o.save
         rescue
-          Shamwow::Ssh._save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{n}")
+          @db.save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{n}")
         end
 
         ifaces = n["ifaces"]
@@ -167,7 +168,7 @@ module Shamwow
           begin
             oi.save
           rescue
-            Shamwow::Ssh._save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{v}")
+            @db.save_error(n["hostname"], 'Http::parse_zenoss_snmp', "#{$ERROR_INFO} #{v}")
           end
         end
         o.save

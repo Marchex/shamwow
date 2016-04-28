@@ -18,9 +18,8 @@ require 'shamwow/ssh/chef_lsof_count'
 module Shamwow
   class Ssh
 
-    def initialize
-      @@errors = []
-      @@errortypes = {}
+    def initialize(db)
+      @db = db
       @taskcounts = {}
       @hosts = {}
       @debug = 1
@@ -79,12 +78,8 @@ module Shamwow
       @hosts.each_value do |o|
         o.save
       end
-
       @taskcounts.each do |type, count|
         puts "Task type: #{type}: #{count}"
-      end
-      @@errortypes.each do |type, count|
-        puts "Error type: #{type}: #{count}"
       end
     end
 
@@ -144,20 +139,7 @@ module Shamwow
     end
 
     def save_error(host, action, message)
-      Ssh._save_error(host, action, message)
-    end
-    def self._save_error(host, action, message)
-      o = ErrorData.new
-      o.attributes= {
-          :timestamp => Time.now,
-          :hostname => host,
-          :action => action,
-          :message => message
-      }
-      o.save
-      @@errors.push(o)
-      @@errortypes["#{message}"] ||= 0
-      @@errortypes["#{message}"] += 1
+      @db.save_error(host, action, message)
     end
   end
 end

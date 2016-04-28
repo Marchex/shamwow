@@ -17,6 +17,9 @@ module Shamwow
   class Db
 
     def initialize(dm_conn, debug)
+
+      @errors = []
+      @errortypes = {}
       #DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, dm_conn)
       DataMapper::Model.raise_on_save_failure = true
@@ -37,5 +40,25 @@ module Shamwow
       node.first_or_create
     end
 
+    def save_error(host, action, message)
+      o = ErrorData.new
+      o.attributes= {
+          :timestamp => Time.now,
+          :hostname => host,
+          :action => action,
+          :message => message
+      }
+      o.save
+      @errors.push(o)
+      @errortypes["#{message}"] ||= 0
+      @errortypes["#{message}"] += 1
+    end
+
+    def finalize
+
+      @errortypes.each do |type, count|
+        puts "Error type: #{type}: #{count}"
+      end
+    end
   end
 end
