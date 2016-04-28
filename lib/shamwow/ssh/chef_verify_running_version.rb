@@ -6,11 +6,11 @@ module Shamwow; module SshTask; class Chef_verify_running_version
       'sudo /usr/sbin/lsof -p $(/usr/bin/pgrep -o chef-client)'
     end
 
-    def self.parse(host, data)
+    def self.parse(host, data, db)
       begin
         rubysize = data.match(/\s+(\d+)\s+\d+\s+\/opt\/chef\/embedded\/bin\/ruby/)[1]
       rescue
-        Shamwow::Ssh._save_error(host, 'SshTask::Chef_verify_running_version/embedded_size', "#{$ERROR_INFO} #{data}")
+        db.save_error(host, 'SshTask::Chef_verify_running_version/embedded_size', "#{$ERROR_INFO} #{data}")
       end
 
       {

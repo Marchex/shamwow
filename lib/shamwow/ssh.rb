@@ -122,7 +122,7 @@ module Shamwow
             #
             channel.on_close do |c_, data|
               host = channel[:host]
-              attributes = SshTask.const_get(task).parse(host, result)
+              attributes = SshTask.const_get(task).parse(host, result, @db)
               SshTask.const_get(task).save(@hosts, host, attributes)
               @taskcounts[task] ||=0
               @taskcounts[task] += 1

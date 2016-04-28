@@ -18,12 +18,12 @@ class Nrpe_get_checkchef_checksum
     begin
       md5data = data.match(/^(\w+)\s+\/site\/general\-nrpe\/binary\/check_chef_fatal.sh/)[1]
     rescue
-      Shamwow::Ssh._save_error(host, 'SshTask::Nrpe_get_checkchef_checksum/md5parse', "#{$ERROR_INFO} #{data}")
+      db.save_error(host, 'SshTask::Nrpe_get_checkchef_checksum/md5parse', "#{$ERROR_INFO} #{data}")
     end
     begin
       lsdata = data.match(/^([\-\w:\s]+\s+[\d:]+)\s+\/site\/general\-nrpe\/binary\/check_chef_fatal.sh/)[1]
     rescue
-      Shamwow::Ssh._save_error(host, 'SshTask::Nrpe_get_checkchef_checksum/lsparse', "#{$ERROR_INFO} #{data}")
+      db.save_error(host, 'SshTask::Nrpe_get_checkchef_checksum/lsparse', "#{$ERROR_INFO} #{data}")
     end
 
     {

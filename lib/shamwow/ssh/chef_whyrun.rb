@@ -7,11 +7,11 @@ module Shamwow; module SshTask; class Chef_whyrun
   #
   # commoon output from command
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   begin
       chefver = data.match(/Starting Chef Client, version ([\w\.]+)/)[1]
   rescue
-    Shamwow::Ssh._save_error(host, 'SshTask::Chef_whyrun/chefver', "#{$ERROR_INFO} #{data}")
+    db.save_error(host, 'SshTask::Chef_whyrun/chefver', "#{$ERROR_INFO} #{data}")
 
   end
     {
