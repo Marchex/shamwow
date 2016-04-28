@@ -3,8 +3,9 @@ module Shamwow; module SshTask;
 class Chef_upgrade
                                   #
   def self.command
+    'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 12.2.1'
     #'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 12.6.0'
-    'sudo yum install -y --nogpg chef.x86_64'
+    #'sudo yum install -y --nogpg chef.x86_64'
   end
   #
   # commoon output from command
