@@ -10,6 +10,7 @@ require 'highline/import'
 
 module Shamwow
   testlist = {}
+  hosts = {}
   $expire_time = 7200
   opts = Slop.parse do |o|
     o.on '-h', '--help' do
@@ -62,8 +63,8 @@ module Shamwow
   db.bootstrap_db
 
   unless opts[:fromdb].nil?
-    enabled = Host.all
-    enabled.each do |e|
+    hosts = Host.all
+    hosts.each do |e|
       testlist[e[:hostname]] = e[:ssh_scan]
     end
   end
@@ -96,7 +97,8 @@ module Shamwow
         stripped = line.strip
         ssh.add_host(stripped)
       else
-        puts "skipping host: #{line}"
+        o = hosts.first({:hostname => line})
+        puts "skipping host: #{line} because: #{o[:notes]}"
       end
     end
 

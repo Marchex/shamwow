@@ -74,7 +74,7 @@ module Shamwow
           }
           cb.save
           c = o.knife_ckbk_links.first_or_new({ :knife_id => o.id, :ckbk_id => cb.id })
-          c.attributes = { :polltime => nowtime }
+          #c.attributes = { :polltime => nowtime }
           c.save
         end
 
@@ -103,8 +103,8 @@ module Shamwow
       stale = @cookbooks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeCkbk records"
       stale.destroy
-      stale = @ckbklinks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
-      puts "#{Time.now} Expiring #{stale.count} KnifeCkbkLink records"
+      #stale = @ckbklinks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
+      #puts "#{Time.now} Expiring #{stale.count} KnifeCkbkLink records"
       stale.destroy
     end
   end
