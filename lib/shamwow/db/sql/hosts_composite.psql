@@ -1,31 +1,33 @@
 create or replace view hosts_composite as
-select s.hostname as ssh_hostname
-  , h.product as host_product
-  , d.name as dns_name
-  , d.domain as dns_domain
-  , k.name as knife_name
-  , k.ohai_time as knife_ohai_time
-  , k.chefenv as knife_environment
-  , k.ip as knife_ipaddress
-  , d.type as dns_record_type
-  , d.address as dns_address
-  , l3.ipaddress as l3_ipaddress
-  , macaddress as l3_macaddress
-  , ipgateway as l3_gateway
-  , port as l3_port
-  , l3.rdns as l3_reverse_dns
-  , l3.polltime as l3_polltime
-  , os ssh_os
-  , os_polltime ssh_os_polltime
-  , chefver ssh_chefver
-  , chefver_polltime ssh_chefver_polltime
-  , chef_lsof_count ssh_chef_lsof_count
-  , chef_lsof_polltime ssh_chef_lsof_count_polltine
-from shamwow_ssh_data s
-left outer join shamwow_dns_data d on d.name = s.hostname
-left outer join shamwow_knife_data k on k.name = s.hostname
-left outer join shamwow_hosts h on h.hostname = s.hostname
-left outer join shamwow_layer3_data l3 on k.ip = l3.ipaddress;
+  select s.hostname as ssh_hostname
+    , h.product as host_product
+    , h.ssh_scan as host_ssh_scan
+    , d.name as dns_name
+    , d.domain as dns_domain
+    , d.ipaddress as dns_ipaddress
+    , k.name as knife_name
+    , k.ohai_time as knife_ohai_time
+    , k.chefenv as knife_environment
+    , k.ip as knife_ipaddress
+    , d.type as dns_record_type
+    , d.address as dns_address
+    , l3.ipaddress as l3_ipaddress
+    , macaddress as l3_macaddress
+    , ipgateway as l3_gateway
+    , port as l3_port
+    , l3.rdns as l3_reverse_dns
+    , l3.polltime as l3_polltime
+    , os ssh_os
+    , os_polltime ssh_os_polltime
+    , chefver ssh_chefver
+    , chefver_polltime ssh_chefver_polltime
+    , chef_lsof_count ssh_chef_lsof_count
+    , chef_lsof_polltime ssh_chef_lsof_count_polltine
+  from shamwow_ssh_data s
+    left outer join shamwow_dns_data d on d.name = s.hostname
+    left outer join shamwow_knife_data k on k.name = s.hostname
+    left outer join shamwow_hosts h on h.hostname = s.hostname
+    left outer join shamwow_layer3_data l3 on k.ip = l3.ipaddress;
 
 ALTER TABLE hosts_composite
 OWNER TO shamwow;
