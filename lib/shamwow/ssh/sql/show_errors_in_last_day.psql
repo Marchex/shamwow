@@ -1,4 +1,17 @@
-select hostname, message
-from shamwow_error_data
-where timestamp > localtimestamp - interval '1 day'
-order by timestamp desc
+create or replace view ssh_errors_last_24_hours as
+  select timestamp as error_timestamp, *
+  from hosts_composite c
+    join (
+           select distinct(regexp_replace(ee.hostname, '\w+@', '')) as tmphostname, max(ee.timestamp) as timestamp
+           from shamwow_error_data ee
+           where timestamp > localtimestamp - INTERVAL '1 day'
+           group by regexp_replace(ee.hostname, '\w+@', '')
+         ) e on c.ssh_hostname = e.tmphostname
+    join shamwow_hosts h on e.tmphostname = h.hostname
+  where h.ssh_scan
+  order by ssh_hostname;
+
+ALTER TABLE ssh_errors_last_24_hours
+OWNER TO shamwow;
+GRANT ALL ON TABLE ssh_errors_last_24_hours TO shamwow;
+GRANT SELECT ON TABLE ssh_errors_last_24_hours TO wowread;

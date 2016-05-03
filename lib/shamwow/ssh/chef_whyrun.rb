@@ -9,7 +9,12 @@ module Shamwow; module SshTask; class Chef_whyrun
 
   def self.parse(host, data, db)
   begin
-      chefver = data.match(/Starting Chef Client, version ([\w\.]+)/)[1]
+      if m = data.match(/Starting Chef Client, version ([\w\.]+)/)
+        chefver = m[1]
+      end
+      if m = data.match(/Starting Chef Run for/)
+        chefver = "< 11.0"
+      end
   rescue
     db.save_error(host, 'SshTask::Chef_whyrun/chefver', "#{$ERROR_INFO} #{data}")
 
