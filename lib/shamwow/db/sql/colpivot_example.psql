@@ -1,0 +1,27 @@
+begin;
+select colpivot('_rl_output',
+                $$ select hostname, runlist, rl_count, 'X' as value from flatten_knife_runlists where hostname like 'vmbuilder%' $$,
+                --$$ select r.hostname, runlist, rl_count, 'X' as value from flatten_knife_runlists r left join shamwow_hosts h on r.hostname = h.hostname where h.product = 'Infrastructure' $$,
+                array['hostname'],
+                array['runlist'],
+                '#.value', 'sum(rl_count) desc'
+);
+
+select * from _rl_output;
+rollback;
+end;
+
+
+begin;
+select colpivot('_cb_output',
+                $$ select hostname, cookbook, cb_count, 'X' as value from flatten_knife_ckbks where hostname like 'vmbuilder%' $$,
+                array['hostname'],
+                array['cookbook'],
+                '#.value', 'sum(cb_count) desc'
+);
+
+select * from _cb_output order by hostname;
+rollback;
+end;
+
+

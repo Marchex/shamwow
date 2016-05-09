@@ -1,0 +1,13 @@
+create or replace view flatten_knife_roles as
+  select k.name as hostname
+    ,rl.name as role
+    ,(select count(*) from shamwow_knife_role_links ll where ll.role_id = rl.id) as rl_count
+  from shamwow_knife_data k
+    join shamwow_knife_role_links l on  k.id = l.knife_id
+    join shamwow_knife_roles rl on l.role_id = rl.id
+  order by rl_count desc;
+
+ALTER TABLE flatten_knife_roles
+OWNER TO shamwow;
+GRANT ALL ON TABLE flatten_knife_roles TO shamwow;
+GRANT SELECT ON TABLE flatten_knife_roles TO wowread;
