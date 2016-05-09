@@ -11,7 +11,7 @@ require 'highline/import'
 module Shamwow
   testlist = {}
   hosts = {}
-  $expire_time = 7200
+  $expire_time = 14400
   opts = Slop.parse do |o|
     o.on '-h', '--help' do
       puts 'HELP!'
@@ -62,14 +62,12 @@ module Shamwow
   db = Shamwow::Db.new(opts[:connection], true)
   db.bootstrap_db
 
-  unless opts[:fromdb].nil?
+  if opts[:fromdb]
     hosts = Host.all
     hosts.each do |e|
       testlist[e[:hostname]] = e[:ssh_scan]
     end
   end
-
-
 
   if opts.dns?
     dns = Shamwow::Dns.new
@@ -138,8 +136,8 @@ module Shamwow
     k.load_data
     out = k.get_status('bumper.sea.marchex.com')
     k.parse_status(out)
-    out = k.get_cookbooks('bumper.sea.marchex.com')
-    k.parse_cookbooks(out)
+    out = k.get_attributes('bumper.sea.marchex.com')
+    k.parse_attributes(out)
     k.expire_records($expire_time)
   end
 

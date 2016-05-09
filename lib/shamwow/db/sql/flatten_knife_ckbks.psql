@@ -1,0 +1,14 @@
+create or replace view flatten_knife_ckbks as
+  select k.name as hostname
+    ,cb.name || '-' || cb.version cookbook
+    ,(select count(*) from shamwow_knife_ckbk_links ll where ll.ckbk_id = cb.id ) as cb_count
+  from shamwow_knife_data k
+    join shamwow_knife_ckbk_links l on  k.id = l.knife_id
+    join shamwow_knife_ckbks cb on l.ckbk_id = cb.id
+
+;
+
+ALTER TABLE flatten_knife_ckbks
+OWNER TO shamwow;
+GRANT ALL ON TABLE flatten_knife_ckbks TO shamwow;
+GRANT SELECT ON TABLE flatten_knife_ckbks TO wowread;

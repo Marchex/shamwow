@@ -1,0 +1,13 @@
+create or replace view flatten_knife_runlists as
+  select k.name as hostname
+    ,rl.name as runlist
+    ,(select count(*) from shamwow_knife_runlist_links ll where ll.runlist_id = rl.id) as rl_count
+  from shamwow_knife_data k
+    join shamwow_knife_runlist_links l on  k.id = l.knife_id
+    join shamwow_knife_runlists rl on l.runlist_id = rl.id
+  order by rl_count desc;
+
+ALTER TABLE flatten_knife_runlists
+OWNER TO shamwow;
+GRANT ALL ON TABLE flatten_knife_runlists TO shamwow;
+GRANT SELECT ON TABLE flatten_knife_runlists TO wowread;
