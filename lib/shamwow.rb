@@ -70,7 +70,7 @@ module Shamwow
   end
 
   if opts.dns?
-    dns = Shamwow::Dns.new
+    dns = Shamwow::Dns.new(db)
     out = dns.transfer_zone('bumper.sea.marchex.com', 'marchex.com')
     dns.update_records(out)
     out = dns.transfer_zone('ns2.aws-us-west-2-vpc4.marchex.com', 'aws-us-west-2-vpc4.marchex.com')

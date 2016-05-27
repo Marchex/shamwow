@@ -4,7 +4,8 @@ require 'shamwow/db'
 
 module Shamwow
   class Dns
-    def initialize
+    def initialize(db)
+      @db = db
       @hosts = {}
       @lookup = {}
       @@errors = []
@@ -102,7 +103,10 @@ module Shamwow
     def expire_records(expire_time)
       stale = DnsData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} DNS records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('dns_node', n["name"], 'expire', "Expiring node from dns")
+      end
+      stale.destroy!
     end
   end
 end

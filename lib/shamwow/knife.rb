@@ -202,16 +202,34 @@ module Shamwow
     def expire_records(expire_time)
       stale = KnifeData.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeData records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('knife_node', n["name"], 'expire', "Expiring node from knife status")
+      end
+      stale.destroy!
+      #
+      #
       stale = KnifeCkbk.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeCkbk records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('knife_cookbook', n["name"], 'expire', "Expiring cookbook from knife search node")
+      end
+      stale.destroy!
+      #
+      #
       stale = KnifeRole.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeRole records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('knife_role', n["name"], 'expire', "Expiring role from knife search node")
+      end
+      stale.destroy!
+      #
+      #
       stale = KnifeRunlist.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeRunlist records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('knife_runlist', n["name"], 'expire', "Expiring runlist from knife search node")
+      end
+      stale.destroy!
     end
   end
 end
