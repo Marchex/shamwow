@@ -51,7 +51,10 @@ module Shamwow
     def expire_l1_records(expire_time)
       stale = Layer1Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} Layer1 records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('layer1_node', n["ethswitch"] + '-' + n['interface'], 'expire', "Expiring node from layer1")
+      end
+      stale.destroy!
     end
 
     def parse_layer2(data)
@@ -87,7 +90,10 @@ module Shamwow
     def expire_l2_records(expire_time)
       stale = Layer2Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} Layer2 records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('layer2_node', n["ethswitch"] + '-' + n['interface'] + '-' + n['macaddress'] + '-' + n['vlan'], 'expire', "Expiring node from layer2")
+      end
+      stale.destroy!
     end
 
     def parse_layer3(data)
@@ -124,7 +130,10 @@ module Shamwow
     def expire_l3_records(expire_time)
       stale = Layer3Data.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} Layer3 records"
-      stale.destroy
+      stale.each do |n|
+        @db.save_log('layer3_node', n["ipgateway"] + '-' + n['port'] + '-' + n['macaddress'] + '-' + n['ipaddress'], 'expire', "Expiring node from layer3")
+      end
+      stale.destroy!
     end
 
     def parse_zenoss_snmp(text)
