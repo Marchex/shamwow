@@ -8,7 +8,7 @@ class Chef_start
   #
   # commoon output from command
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   {
         :category => 'start_chef_client',
         :chef_exec_output => data,

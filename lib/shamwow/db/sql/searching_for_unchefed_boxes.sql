@@ -1,0 +1,51 @@
+select * from layers_1to3_flattened f
+  left outer join shamwow_knife_data k on f.rdns = k.name
+where  k.name is null
+    and (cast('10.204.103.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.104.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.105.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.106.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.107.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.108.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.109.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.110.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.111.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.112.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.113.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.114.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.115.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.116.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.117.0/24' as inet) >> network(cast (ipaddress as inet))
+      or cast('10.204.118.0/24' as inet) >> network(cast (ipaddress as inet))
+    )
+order by network(cast (ipaddress as inet))
+
+--SEA1 - 10.205.0.0/16 through 10.212.0.0/16
+select * from layers_1to3_flattened f
+  left outer join shamwow_knife_data k on f.rdns = k.name
+where  k.name is null
+       and (cast('10.205.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.206.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.207.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.208.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.209.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.210.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.211.0.0/16' as inet) >> network(cast (ipaddress as inet))
+            or cast('10.212.0.0/16' as inet) >> network(cast (ipaddress as inet))
+       -- These CIDRs came from Erwin on 8/31/2016 -- should be LBs
+       ) and not (cast('10.10.10/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.108.172/22' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.108.50/23' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.11.253/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.204.50/23' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.204.52/23' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.204.54/23' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.204.56/23' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.205.253/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.207.253/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('10.30.253/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('174.137.114/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('174.137.122/24' as inet) >> network(cast (ipaddress as inet))
+                  or cast('8.20.80/24' as inet) >> network(cast (ipaddress as inet))
+       )
+order by network(cast (ipaddress as inet))

@@ -5,7 +5,7 @@ class Chef_stop
     'sudo pkill -9 chef-client && sudo rm -f /var/run/chef/client.pid; ps -ef | grep chef-client'
   end
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   {
         :category => 'stop_chef_client',
         :chef_exec_output => data,

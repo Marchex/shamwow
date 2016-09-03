@@ -18,7 +18,7 @@ module Shamwow
       patterns["#{p}"] = product[:product_group]
     end
   end
-  puts patterns.count
+  #puts patterns.count
   sshhosts.each do |sshhost|
     begin
     host = Host.first_or_create({ :hostname => sshhost[:hostname]})
@@ -46,10 +46,11 @@ module Shamwow
     name.gsub!(/^ci\-/, '')
     name.gsub!(/^stg\-/, '')
     name.gsub!(/^qa[\d]{0,1}\-/, '')
-    patterns.each do |k,v|
-      if name.match(/#{k}/)
-        puts "#{name} #{k} #{v}"
-        host[:product] = v
+    host[:product] = nil
+    patterns.each do |pattern, product|
+      if name.match(/#{pattern}/)
+        puts "#{name} #{pattern} #{product}"
+        host[:product] = product
       end
     end
     begin
