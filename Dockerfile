@@ -16,4 +16,5 @@ COPY ["id_rsa", "/root/.ssh/id_rsa"]
 
 RUN cd /root/shamwow && gem install bundler && bundle install
 
-CMD cd /root/shamwow && bin/console --user jcarter --dns --knife
+CMD cd /root/shamwow && bin/console --user jcarter --knife \
+    --connection 'postgres://shamwow@db/shamwow'

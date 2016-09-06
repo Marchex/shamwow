@@ -6,7 +6,7 @@ require 'shamwow/version'
 require 'shamwow/knife'
 require 'slop'
 require 'highline/import'
-
+require 'json'
 
 module Shamwow
   testlist = {}
@@ -20,7 +20,7 @@ module Shamwow
     o.string '--host', 'run on a hostname', default: nil
     o.string '--from', 'hosts from a file', default: nil
     o.bool   '--fromdb', 'hosts from hsots table', default: false
-    o.string '--connection', 'postgres connection string', default: 'postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow'
+    o.string '--connection', 'postgres connection string', default: 'postgres://postgres@192.168.99.100:32770/shamwow'
     o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
     o.string '-u', '--user', 'the user to connect to using ssh', default: ENV['USER']
     o.string '-P', '--password', 'read password from args', default: nil
@@ -34,6 +34,14 @@ module Shamwow
       puts Slop::VERSION
       exit
     end
+  end
+
+  def load_config(file = 'config.json')
+    @conf = JSON.parse(IO.read(file))
+  end
+
+  def get_config
+    @conf
   end
 
   if opts[:askpass]
