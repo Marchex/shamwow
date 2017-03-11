@@ -1,5 +1,5 @@
 
-module Shamwow; module SshTask; class Chef_whyrun
+module Shamwow; module SshTask; class Chef_run
                                   #
   def self.command
     'sudo chef-client'
@@ -16,7 +16,7 @@ module Shamwow; module SshTask; class Chef_whyrun
         chefver = "< 11.0"
       end
   rescue
-    db.save_error(host, 'SshTask::Chef_whyrun/chefver', "#{$ERROR_INFO} #{data}")
+    db.save_error(host, 'SshTask::Chef_run/chefver', "#{$ERROR_INFO} #{data}")
 
   end
     {

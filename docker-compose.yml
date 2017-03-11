@@ -1,0 +1,13 @@
+version: '2'
+services:
+  db:
+    build: ./dockerfiles/db/
+    image: shamwow_db:latest
+
+  shamwow:
+    build: .
+    image: shamwow:latest
+    links:
+      - db
+    depends_on:
+      - db
