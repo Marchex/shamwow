@@ -17,20 +17,20 @@ module Shamwow
       puts 'HELP!'
       exit
     end
-    o.string '--host', 'run on a hostname', default: nil
-    o.string '--from', 'hosts from a file', default: nil
-    o.bool   '--fromdb', 'hosts from hsots table', default: false
-    o.string '--connection', 'postgres connection string', default: 'postgres://postgres@192.168.99.100:32770/shamwow'
-    o.array '--sshtasks', 'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
-    o.string '-u', '--user', 'the user to connect to using ssh', default: ENV['USER']
+    o.string '--host',           'run on a hostname', default: nil
+    o.string '--from',           'hosts from a file', default: nil
+    o.bool   '--fromdb',         'hosts from hsots table', default: false
+    o.string '--connection',     'postgres connection string', default: ENV['CONNECTIONSTRING']
+    o.array  '--sshtasks',       'a list of sshtasks to execute', default: ['Chef_version'], delimiter: ','
+    o.string '-u', '--user',     'the user to connect to using ssh', default: ENV['USER']
     o.string '-P', '--password', 'read password from args', default: nil
-    o.bool '-p', '--askpass', 'read password from stdlin', default: false
-    #o.bool '--all', 'poll all known hosts'
-    o.bool '--dns', 'poll dns'
-    o.bool '--ssh', 'poll ssh'
-    o.bool '--net', 'poll network engineerings website'
-    o.bool '--knife', 'poll knife status'
-    o.on '--version', 'print the version' do
+    o.bool   '-p', '--askpass',  'read password from stdlin', default: false
+    o.bool   '--dns',            'poll dns'
+    o.bool   '--ssh',            'poll ssh'
+    o.bool   '--net',            'poll network engineerings website'
+    o.bool   '--knife',          'poll knife status'
+    o.bool   '--dbdebug',        'dumps ORM\'s raw sql', default: false
+    o.on     '--version',        'print the version' do
       puts Slop::VERSION
       exit
     end
@@ -42,6 +42,11 @@ module Shamwow
 
   def get_config
     @conf
+  end
+  #
+  # If a con
+  if opts[:config]
+    $config = load_config(opts[:configfile] || nil )
   end
 
   if opts[:askpass]
@@ -67,7 +72,7 @@ module Shamwow
     end
   end
 
-  db = Shamwow::Db.new(opts[:connection], true)
+  db = Shamwow::Db.new(opts[:connection], opts[:dbdebug])
   db.bootstrap_db
 
   if opts[:fromdb]
@@ -133,10 +138,6 @@ module Shamwow
     puts "Layer 3 record count: #{parsed.count}"
     h.save_all_layer3
     h.expire_l3_records($expire_time)
-    #
-    snmpdata = h.get('http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json')
-    h.parse_zenoss_snmp(snmpdata)
-    h.expire_snmp_records($expire_time)
   end
 
   if opts.knife?

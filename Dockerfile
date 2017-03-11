@@ -15,6 +15,7 @@ COPY ["shamwow.gemspec", "/root/shamwow/shamwow.gemspec"]
 COPY ["id_rsa", "/root/.ssh/id_rsa"]
 
 RUN cd /root/shamwow && gem install bundler && bundle install
+ENV USER shamwow
+ENV CONNECTIONSTRING postgres://postgres@192.168.99.100:54320/shamwow
 
-CMD cd /root/shamwow && bin/console --user jcarter --knife \
-    --connection 'postgres://shamwow@db/shamwow'
+CMD cd /root/shamwow && bin/console --knife

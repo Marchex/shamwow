@@ -23,24 +23,14 @@ module Shamwow
       @logs = []
       @errortypes = {}
       @logtypes = {}
-      #DataMapper::Logger.new($stdout, :debug) if debug
+      DataMapper::Logger.new($stdout, :debug) if debug
       DataMapper.setup(:default, dm_conn)
       DataMapper::Model.raise_on_save_failure = true
       DataMapper.finalize
     end
 
-
     def bootstrap_db
       DataMapper.auto_upgrade!
-    end
-
-    def create_node node
-      Node.first_or_create({ :hostname => node[:hostname]}, node)
-    end
-
-    def create_sshdata node
-      #SshData.first_or_create({ :hostname => node[:hostname]}, node)
-      node.first_or_create
     end
 
     def save_error(host, action, message)
