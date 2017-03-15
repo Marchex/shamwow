@@ -21,10 +21,13 @@ module Shamwow
 
     def load_data
       @nodes     = KnifeData.all
+      puts "#{Time.now} Loaded #{@nodes.count} KnifeData records"
       @cookbooks = KnifeCkbk.all
-      #@ckbklinks = KnifeCkbkLink.all
+      puts "#{Time.now} Loaded #{@cookbooks.count} KnifeCkbk records"
       @roles     = KnifeRole.all
+      puts "#{Time.now} Loaded #{@roles.count} KnifeRole records"
       @runlists  = KnifeRunlist.all
+      puts "#{Time.now} Loaded #{@runlists.count} KnifeRunlist records"
     end
 
     def parse_status(output)

@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Jimmy Carter <jcarter@marchex.com>
+MAINTAINER Tools Team <tools-team@marchex.com>
 RUN apt-get update && \
 
     apt-get install -y build-essential && \
@@ -12,10 +12,10 @@ COPY ["lib", "/root/shamwow/lib/"]
 COPY ["bin", "/root/shamwow/bin/"]
 COPY ["Gemfile", "/root/shamwow/Gemfile"]
 COPY ["shamwow.gemspec", "/root/shamwow/shamwow.gemspec"]
-COPY ["id_rsa", "/root/.ssh/id_rsa"]
 
 RUN cd /root/shamwow && gem install bundler && bundle install
 ENV USER shamwow
 ENV CONNECTIONSTRING postgres://postgres@192.168.99.100:54320/shamwow
 
-CMD cd /root/shamwow && bin/console --knife
+# CMD cd /root/shamwow && bin/console --knife
+CMD bash
