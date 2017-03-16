@@ -14,9 +14,15 @@ module Shamwow
     end
 
     def get_status(fromhost)
-      Net::SSH.start(fromhost, $user) do |ssh|
-        ssh.exec!("knife status -F json 'fqdn:*'")
+      if fromhost == 'localhost'
+        exec("knife status -F json 'fqdn:*'")
+      else
+
+        Net::SSH.start(fromhost, $user) do |ssh|
+          ssh.exec!("knife status -F json 'fqdn:*'")
+        end
       end
+
     end
 
     def load_data
@@ -148,7 +154,8 @@ module Shamwow
       # Find stale links, unlink them
       old_set.each do |id, v|
         if new_set[id].nil?
-          puts host + "-Deleting link to runlist: #{v}"
+          ckbk = @cookbooks.first(:id => v)
+          puts host + "-Deleting link to runlist: #{ckbk.name}-#{ckbk.version}"
           node.knife_runlist_links.first({ :runlist_id => id }).destroy
         end
       end

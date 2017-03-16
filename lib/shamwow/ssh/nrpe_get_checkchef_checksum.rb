@@ -14,7 +14,7 @@ class Nrpe_get_checkchef_checksum
   # -rwxr-xr-x 1 jcarter users 6029 Mar 29 14:00 /site/general-nrpe/binary/check_chef_fatal.sh
   # jcarter@bumper:~$
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
     begin
       md5data = data.match(/^(\w+)\s+\/site\/general\-nrpe\/binary\/check_chef_fatal.sh/)[1]
     rescue

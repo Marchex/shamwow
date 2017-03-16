@@ -1,10 +1,10 @@
-export FILE='data/day.16.ubuntu.out'
+export FILE='data/2017_upgrades.txt'
 echo "---$FILE---"
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_version
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_run
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_upgrade
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_stop
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_run
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_start
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_verify_running_version
-bin/console --user jcarter --ssh --from $FILE --sshtasks Chef_version
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_version
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_run
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_upgrade
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_stop
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_run
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_start
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_verify_running_version
+bin/console -P $password --user jcarter --ssh --from $FILE --sshtasks Chef_version

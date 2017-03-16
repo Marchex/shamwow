@@ -76,10 +76,17 @@ module Shamwow
   db.bootstrap_db
 
   if opts[:fromdb]
+    # assuming all nodes from Chef will be ssh-reachable
+    KnifeData.all.each do |k|
+      testlist[k[:name]] = true
+    end
+    # hosts may override w/ ssh_scan == false
     hosts = Host.all
     hosts.each do |e|
       testlist[e[:hostname]] = e[:ssh_scan]
     end
+
+
   end
 
   if opts.dns?
@@ -109,33 +116,33 @@ module Shamwow
         ssh.add_host(stripped)
       else
         o = hosts.first({:hostname => line})
-        puts "skipping host: #{line} because: #{o[:notes]}"
+        puts "#{Time.now}-Shamwow::Ssh: skipping host: #{line} because: #{o[:notes]}"
       end
     end
 
-    puts "#{Time.now}-session count #{ssh.count_hosts}"
+    puts "#{Time.now}-Shamwow::Ssh: session count #{ssh.count_hosts}"
     ssh.execute(opts[:sshtasks])
     ssh.save
-    puts "#{Time.now} Done"
+    puts "#{Time.now}-Shamwow::Ssh: Done"
   end
 
   if opts.net?
     h = Shamwow::Http.new(db)
     layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
     parsed = h.parse_layer1(h.remove_header(layer1))
-    puts "Layer 1 record count: #{parsed.count}"
+    puts "#{Time.now}-Shamwow::Http: Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
     h.expire_l1_records($expire_time)
     #
     layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
     parsed = h.parse_layer2(h.remove_header(layer2))
-    puts "Layer 2 record count: #{parsed.count}"
+    puts "#{Time.now}-Shamwow::Http: Layer 2 record count: #{parsed.count}"
     h.save_all_layer2
     h.expire_l2_records($expire_time)
     #
     layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
     parsed = h.parse_layer3(h.remove_header(layer3))
-    puts "Layer 3 record count: #{parsed.count}"
+    puts "#{Time.now}-Shamwow::Http: Layer 3 record count: #{parsed.count}"
     h.save_all_layer3
     h.expire_l3_records($expire_time)
   end

@@ -3,14 +3,14 @@ module Shamwow; module SshTask;
 class Chef_upgrade
                                   #
   def self.command
-    'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 12.6.0'
+    'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 12.18.31'
   end
   #
   # commoon output from command
 
   def self.parse(host, data)
   {
-        :category => 'upgrade_to_12.6.0',
+        :category => 'upgrade_to_12.18.31',
         :chef_exec_output => data,
         :chef_exec_polltime => Time.now
     }

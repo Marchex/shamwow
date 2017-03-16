@@ -10,7 +10,7 @@ module Shamwow
     property :os_polltime,                DateTime
     property :chefver,                    String
     property :chefver_polltime,           DateTime
-    property :chef_strace_method,         String, :length => 400
+    property :chef_strace_method,         Text
     property :chef_strace_gentime,        DateTime
     property :chef_strace_full,           Text
     property :chef_strace_polltime,       DateTime

@@ -69,6 +69,7 @@ module Shamwow
       @session.loop(15, &block)
       rescue
         puts $ERROR_INFO
+        puts $ERROR_POSITION
       end
 
 

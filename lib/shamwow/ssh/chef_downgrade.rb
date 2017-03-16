@@ -3,14 +3,14 @@ module Shamwow; module SshTask;
 class Chef_downgrade
                                   #
   def self.command
-    'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 11.16.4'
+    'curl -L https://www.chef.io/chef/install.sh | sudo bash -s -- -v 12.6.0'
   end
   #
   # commoon output from command
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   {
-        :category => 'downgrade_to_11.16.4',
+        :category => 'downgrade_to_12.6.0',
         :chef_exec_output => data,
         :chef_exec_polltime => Time.now
     }
