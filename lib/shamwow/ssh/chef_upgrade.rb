@@ -8,7 +8,7 @@ class Chef_upgrade
   #
   # commoon output from command
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   {
         :category => 'upgrade_to_12.18.31',
         :chef_exec_output => data,

@@ -150,9 +150,9 @@ module Shamwow
   if opts.knife?
     k = Shamwow::Knife.new(db)
     k.load_data
-    out = k.get_status('bumper.sea.marchex.com')
+    out = k.get_status('localhost')
     k.parse_status(out)
-    out = k.get_attributes('bumper.sea.marchex.com')
+    out = k.get_attributes('localhost')
     k.parse_attributes(out)
     k.expire_records($expire_time)
   end
