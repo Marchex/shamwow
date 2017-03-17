@@ -11,7 +11,7 @@ require 'json'
 module Shamwow
   testlist = {}
   hosts = {}
-  $expire_time = 14400
+  $expire_time = 14400 # 4hrs
   opts = Slop.parse do |o|
     o.on '-h', '--help' do
       puts 'HELP!'
@@ -130,6 +130,8 @@ module Shamwow
     h = Shamwow::Http.new(db)
     layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
     parsed = h.parse_layer1(h.remove_header(layer1))
+
+
     puts "#{Time.now}-Shamwow::Http: Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
     h.expire_l1_records($expire_time)

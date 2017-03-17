@@ -15,14 +15,13 @@ module Shamwow
 
     def get_status(fromhost)
       if fromhost == 'localhost'
-        exec("knife status -F json 'fqdn:*'")
+        foo = exec("knife status -F json 'fqdn:*'") # this exex doesnt behave like ssh.exec!
       else
-
         Net::SSH.start(fromhost, $user) do |ssh|
-          ssh.exec!("knife status -F json 'fqdn:*'")
+          foo = ssh.exec!("knife status -F json 'fqdn:*'")
         end
       end
-
+      foo
     end
 
     def load_data
@@ -41,13 +40,13 @@ module Shamwow
       data = JSON.parse(output)
       data.each do |n|
         #p n
-        o = KnifeData.first_or_new( { :name => n["name"] })
+        o = KnifeData.first_or_new( { :name => n['name'] })
 
-        o.attributes={ :chefenv => n["chef_environment"],
-                       :ip => n["ip"],
-                       :ohai_time => Time.at(n["ohai_time"]).to_datetime,
-                       :platform => n["platform"],
-                       :platform_version => n["platform_version"],
+        o.attributes={ :chefenv => n['chef_environment'],
+                       :ip => n['ip'],
+                       :ohai_time => Time.at(n['ohai_time']).to_datetime,
+                       :platform => n['platform'],
+                       :platform_version => n['platform_version'],
                        :polltime => nowtime }
         o.save
       end
@@ -71,19 +70,19 @@ module Shamwow
       nowtime = Time.now
       data = JSON.parse(output)
 
-      data["rows"].each do |hostobj|
+      data['rows'].each do |hostobj|
         (name, obj) = hostobj.first
 
-        if obj["cookbooks"]
-          parse_cookbooks(name, nowtime, obj["cookbooks"])
+        if obj['cookbooks']
+          parse_cookbooks(name, nowtime, obj['cookbooks'])
         end
 
-        if obj["roles"]
-          parse_roles(name, nowtime, obj["roles"])
+        if obj['roles']
+          parse_roles(name, nowtime, obj['roles'])
         end
 
-        if obj["run_list"]
-          parse_runlists(name, nowtime, obj["run_list"])
+        if obj['run_list']
+          parse_runlists(name, nowtime, obj['run_list'])
         end
 
       end
@@ -99,13 +98,15 @@ module Shamwow
       # Find new links, link them
       new_set.each do |id, label|
         if old_set[id].nil?
+          @db.save_log('knife_cookbook', host, 'create', "Creating link to ckbk #{label}")
           node.knife_ckbk_links.first_or_new({ :ckbk_id => id })
         end
       end
       # Find stale links, unlink them
       old_set.each do |id, v|
         if new_set[id].nil?
-          puts host + "-Deleting link to ckbk: #{v}"
+          ckbk = @cookbooks.first(:id => v)
+          @db.save_log('knife_cookbook', host, 'delete', "Deleting link to ckbk #{ckbk.name}-#{ckbk.version}")
           node.knife_ckbk_links.first({ :ckbk_id => id }).destroy
         end
       end
@@ -123,13 +124,15 @@ module Shamwow
       # Find new links, link them
       new_set.each do |id, label|
         if old_set[id].nil?
+          @db.save_log('knife_role', host, 'create', "Creating link to role #{label}")
           node.knife_role_links.first_or_new({ :role_id => id })
         end
       end
       # Find stale links, unlink them
       old_set.each do |id, v|
         if new_set[id].nil?
-          puts host + "-Deleting link to role: #{v}"
+          role = roles.first(:id => v)
+          @db.save_log('knife_role', host, 'delete', "Deleting link to role #{role.name}-#{role.version}")
           node.knife_role_links.first({ :role_id => id }).destroy
         end
       end
@@ -147,6 +150,7 @@ module Shamwow
       # Find new links, link them
       new_set.each do |id, label|
         if old_set[id].nil?
+          @db.save_log('knife_runlist', host, 'create', "Creating link to runlist #{label}")
           o = node.knife_runlist_links.first_or_new({ :runlist_id => id })
           o.save
         end
@@ -154,8 +158,8 @@ module Shamwow
       # Find stale links, unlink them
       old_set.each do |id, v|
         if new_set[id].nil?
-          ckbk = @cookbooks.first(:id => v)
-          puts host + "-Deleting link to runlist: #{ckbk.name}-#{ckbk.version}"
+          rl = runlists.first(:id => v)
+          @db.save_log('knife_runlist', host, 'delete', "Deleting link to runlist #{rl.name}-#{rl.version}")
           node.knife_runlist_links.first({ :runlist_id => id }).destroy
         end
       end
@@ -168,10 +172,10 @@ module Shamwow
     def get_cookbooks(data)
       set = {}
       data.each do |ckbk, attrs|
-        cb = @cookbooks.first_or_create({ :name => ckbk, :version => attrs["version"] })
+        cb = @cookbooks.first_or_create({ :name => ckbk, :version => attrs['version'] })
         cb.attributes = { :polltime => Time.now }
         cb.save
-        set[cb.id] = ckbk + '-' + attrs["version"]
+        set[cb.id] = ckbk + '-' + attrs['version']
       end
       set
     end
@@ -204,24 +208,24 @@ module Shamwow
     end
 
     def save_records
+      puts 'Saving '
       nodes.each_value do |o|
         o.save
+        puts '.'
       end
     end
 
     def expire_records(expire_time)
       stale = @nodes.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
-      puts "#{Time.now} Expiring #{stale.count} KnifeData records"
       stale.each do |n|
-        @db.save_log('knife_node', n["name"], 'expire', "Expiring node from knife status")
+        @db.save_log('knife_node', n['name'], 'expire', 'Expiring node from knife status')
       end
       stale.destroy!
       #
       #
       stale = @cookbooks.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
-      puts "#{Time.now} Expiring #{stale.count} KnifeCkbk records"
       stale.each do |n|
-        @db.save_log('knife_cookbook', n["name"], 'expire', "Expiring cookbook from knife search node")
+        @db.save_log('knife_cookbook', n['name'], 'expire', 'Expiring cookbook from knife search node')
       end
       stale.destroy!
       #
@@ -229,15 +233,14 @@ module Shamwow
       stale = @roles.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
       puts "#{Time.now} Expiring #{stale.count} KnifeRole records"
       stale.each do |n|
-        @db.save_log('knife_role', n["name"], 'expire', "Expiring role from knife search node")
+        @db.save_log('knife_role', n['name'], 'expire', 'Expiring role from knife search node')
       end
       stale.destroy!
       #
       #
       stale = @runlists.all(:polltime.lt => Time.at(Time.now.to_i - expire_time))
-      puts "#{Time.now} Expiring #{stale.count} KnifeRunlist records"
       stale.each do |n|
-        @db.save_log('knife_runlist', n["name"], 'expire', "Expiring runlist from knife search node")
+        @db.save_log('knife_runlist', n['name'], 'expire', 'Expiring runlist from knife search node')
       end
       stale.destroy!
     end
