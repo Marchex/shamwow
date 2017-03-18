@@ -26,7 +26,6 @@ module Shamwow; module SshTask; class Os_version
     end
 
     def self.save(repo, host, attributes)
-      puts attributes
       o = repo["#{host}"]
       o.attributes = attributes
       o.save

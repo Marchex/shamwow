@@ -48,23 +48,23 @@ module Shamwow
   if opts[:config]
     $config = load_config(opts[:configfile] || nil )
   end
-
+  # read the password from stdin
   if opts[:askpass]
     $password = ask("Enter Password:") {|q| q.echo = false }
   end
-
+  # the user used for ssh'ing
   unless opts[:user].nil?
     $user = opts[:user]
   end
-
+  # the user's password for sudo
   unless opts[:password].nil?
     $password = opts[:password]
   end
-
+  # a single host to scan from the cli
   unless opts[:host].nil?
     testlist[opts[:host]] = true
   end
-
+  # from a file (each line is a hostname)
   unless opts[:from].nil?
     fh = File.open opts[:from], 'r'
     fh.each_line do |line|
@@ -72,6 +72,8 @@ module Shamwow
     end
   end
 
+  # establish connection to postgres. If the schema doesn't
+  # match, the ORM will attempt to update, or throw an error
   db = Shamwow::Db.new(opts[:connection], opts[:dbdebug])
   db.bootstrap_db
 
@@ -85,10 +87,9 @@ module Shamwow
     hosts.each do |e|
       testlist[e[:hostname]] = e[:ssh_scan]
     end
-
-
   end
 
+  # polls dns servers for records
   if opts.dns?
     dns = Shamwow::Dns.new(db)
     out = dns.transfer_zone('bumper.sea.marchex.com', 'marchex.com')
@@ -106,6 +107,7 @@ module Shamwow
     dns.expire_records($expire_time)
   end
 
+  # executes ssh tasks in parallel
   if opts.ssh?
     ssh = Shamwow::Ssh.new(db)
     ssh.create_session
@@ -126,11 +128,11 @@ module Shamwow
     puts "#{Time.now}-Shamwow::Ssh: Done"
   end
 
+  # this polls Marchex's custom network management tool (RIP Erwin!)
   if opts.net?
     h = Shamwow::Http.new(db)
     layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
     parsed = h.parse_layer1(h.remove_header(layer1))
-
 
     puts "#{Time.now}-Shamwow::Http: Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
@@ -149,6 +151,7 @@ module Shamwow
     h.expire_l3_records($expire_time)
   end
 
+  # polls knife status and cookbook, role, and runlist data from the nodes
   if opts.knife?
     k = Shamwow::Knife.new(db)
     k.load_data
