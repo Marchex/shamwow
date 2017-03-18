@@ -40,7 +40,7 @@ module Shamwow
       data = JSON.parse(output)
       data.each do |n|
         #p n
-        o = KnifeData.first_or_new( { :name => n['name'] })
+        o = @nodes.first_or_new( { :name => n["name"] })
 
         o.attributes={ :chefenv => n['chef_environment'],
                        :ip => n['ip'],
