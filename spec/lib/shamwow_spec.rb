@@ -20,7 +20,7 @@ describe 'Shamwow' do
     Shamwow
     #
     # Assert
-    expect(result).to eq([:Chef_version, :Etc_issue])
+    expect(result).to eq([:Chef_version, :Os_version])
   end
 
 end

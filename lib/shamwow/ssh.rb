@@ -2,7 +2,7 @@ require 'net/ssh/multi'
 require 'shamwow/db'
 #Dir["shamwow/ssh/*.rb"].each {|file| require file; puts "#{file}" }
 require 'shamwow/ssh/chef_version'
-require 'shamwow/ssh/etc_issue'
+require 'shamwow/ssh/os_version'
 require 'shamwow/ssh/chef_stacktrace'
 require 'shamwow/ssh/chef_run'
 require 'shamwow/ssh/chef_upgrade'

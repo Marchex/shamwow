@@ -15,7 +15,7 @@ describe 'Ssh/Etc_issue' do
     allow(Time).to receive(:now).and_return(@time_now)
     #
     # # Act
-    result = Shamwow::SshTask::Etc_issue.parse('host', 'CentOS release 6.4 (Final)
+    result = Shamwow::SshTask::Os_version.parse('host', 'CentOS release 6.4 (Final)
 Kernel \r on an \m
 ')
     #
@@ -29,7 +29,7 @@ Kernel \r on an \m
     allow(Time).to receive(:now).and_return(@time_now)
     #
     # # Act
-    result = Shamwow::SshTask::Etc_issue.parse('foo', 'Debian GNU/Linux 5.0 \n \l
+    result = Shamwow::SshTask::Os_version.parse('foo', 'Debian GNU/Linux 5.0 \n \l
 ')
     #
     # Assert
@@ -42,7 +42,7 @@ Kernel \r on an \m
     allow(Time).to receive(:now).and_return(@time_now)
     #
     # # Act
-    result = Shamwow::SshTask::Etc_issue.parse('foo', 'Ubuntu 12.04.5 LTS \n \l
+    result = Shamwow::SshTask::Os_version.parse('foo', 'Ubuntu 12.04.5 LTS \n \l
 ')
     #
     # Assert

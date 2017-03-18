@@ -18,7 +18,7 @@ describe 'Knife' do
     result = dns.parse_tasks(['Chef_version','Etc_issue'])
     #
     # Assert
-    expect(result).to eq([:Chef_version, :Etc_issue])
+    expect(result).to eq([:Chef_version, :Os_version])
   end
 
 end
