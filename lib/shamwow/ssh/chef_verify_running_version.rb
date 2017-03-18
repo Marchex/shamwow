@@ -4,10 +4,6 @@ module Shamwow; module SshTask; class Chef_verify_running_version
     def self.command
       'sudo /usr/bin/lsof -p $(/usr/bin/pgrep -o chef-client)'
     end
-    #
-    # commoon output from command
-    #   chef-clie 27653 root  txt    REG  202,1     12031 6033542 /opt/chef/embedded/bin/ruby
-    #   Chef: 12.5.1
 
     def self.parse(host, data, db)
       begin

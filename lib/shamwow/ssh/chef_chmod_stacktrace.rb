@@ -5,7 +5,7 @@ class Chef_chmod_stacktrace
     'sudo chmod 644 /var/chef/cache/chef-stacktrace.out; ls -l /var/chef/cache/chef-stacktrace.out'
   end
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
     {
         :category => 'chef_chmod_stacktrace',
         :chef_exec_output => data,

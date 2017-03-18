@@ -47,7 +47,7 @@ module Shamwow
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use host, :timeout => 30, :password => $password, :user => $user
+      @session.use host, :timeout => 30, :password => $password, :user => $user, :keys => '/home/vagrant/.ssh/id_rsa'
     end
 
     def count_hosts
@@ -69,6 +69,7 @@ module Shamwow
       @session.loop(15, &block)
       rescue
         puts $ERROR_INFO
+        puts $ERROR_POSITION
       end
 
 

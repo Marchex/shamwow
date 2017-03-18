@@ -12,3 +12,6 @@
 data/
 id_rsa
 .kitchen/
+!conf/config.json
+conf/*
+conf/*

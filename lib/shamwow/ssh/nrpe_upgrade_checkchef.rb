@@ -8,7 +8,7 @@ class Nrpe_upgrade_checkchef
   #
   # commoon output from command
 
-  def self.parse(host, data)
+  def self.parse(host, data, db)
   {
         :category => 'upgrade_check_chef_fatal',
         :chef_exec_output => data,
