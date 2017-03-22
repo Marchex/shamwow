@@ -159,7 +159,7 @@ module Shamwow
       old_set.each do |id, v|
         if new_set[id].nil?
           rl = @runlists.first(:id => v)
-          @db.save_log('knife_runlist', host, 'delete', "Deleting link to runlist #{rl.name}-#{rl.version}")
+          @db.save_log('knife_runlist', host, 'delete', "Deleting link to runlist #{rl.name}")
           node.knife_runlist_links.first({ :runlist_id => id }).destroy
         end
       end
