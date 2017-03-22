@@ -15,6 +15,7 @@ require 'shamwow/ssh/nrpe_upgrade_checkchef'
 require 'shamwow/ssh/nrpe_get_checkchef_checksum'
 require 'shamwow/ssh/chef_lsof_count'
 require 'shamwow/ssh/chef_server_url'
+require 'shamwow/ssh/chef_set_url_onpremises'
 
 module Shamwow
   class Ssh
