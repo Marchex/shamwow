@@ -107,23 +107,29 @@ module Shamwow
             result = String.new
             raise "could not request pty" unless success
             #
-            channel.exec SshTask.const_get(task).command
-            # puts SshTask.const_get(task).command
+            c.exec SshTask.const_get(task).command
             #
-            channel.on_data do |c_, data|
-              host = channel[:host]
+            # STDOUT...
+            c.on_data do |c_, data|
+              #host = channel[:host]
               if data =~ /\[sudo\]/ || data =~ /[Pp]assword/i
-                channel.send_data $password += "\n"
+                c.send_data $password += "\n"
               else
                 result = result.concat data
               end
             end
-            channel.on_extended_data do |c_, data|
-              result = result.concat data
+            #
+            # STDERR...
+            c.on_extended_data do |c_, data|
+              if data =~ /\[sudo\]/ || data =~ /[Pp]assword/i
+                c.send_data $password += "\n"
+              else
+                result = result.concat data
+              end
             end
             #
-            channel.on_close do |c_, data|
-              host = channel[:host]
+            c.on_close do |c_, data|
+              host = c[:host]
               attributes = SshTask.const_get(task).parse(host, result, @db)
               SshTask.const_get(task).save(@hosts, host, attributes)
               @taskcounts[task] ||=0

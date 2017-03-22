@@ -79,12 +79,13 @@ module Shamwow
 
   if opts[:fromdb]
     # assuming all nodes from Chef will be ssh-reachable
-    KnifeData.all.each do |k|
-      testlist[k[:name]] = true
-    end
+    # KnifeData.all.each do |k|
+    #   testlist[k[:name]] = true
+    # end
     # hosts may override w/ ssh_scan == false
     hosts = Host.all
     hosts.each do |e|
+      # only scan if ssh_scan == true
       testlist[e[:hostname]] = e[:ssh_scan]
     end
   end
