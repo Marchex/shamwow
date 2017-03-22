@@ -19,6 +19,8 @@ module Shamwow
     property :nrpe_chefcheck_checksum,    String, :length => 100
     property :nrpe_chefcheck_fileinfo,    String, :length => 100
     property :nrpe_checksum_polltime,     DateTime
+    property :chef_server_url,            String, :length => 150
+    property :chef_server_url_polltime,   DateTime
 
     has n, :sshdata_exec_output
 

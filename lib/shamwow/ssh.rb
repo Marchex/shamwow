@@ -14,6 +14,7 @@ require 'shamwow/ssh/gem_list_ldap'
 require 'shamwow/ssh/nrpe_upgrade_checkchef'
 require 'shamwow/ssh/nrpe_get_checkchef_checksum'
 require 'shamwow/ssh/chef_lsof_count'
+require 'shamwow/ssh/chef_server_url'
 
 module Shamwow
   class Ssh
