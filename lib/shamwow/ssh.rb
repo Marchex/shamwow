@@ -42,7 +42,7 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 100
+      @session.concurrent_connections = 50
     end
 
     def add_host(host)

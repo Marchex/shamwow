@@ -3,8 +3,8 @@ module Shamwow; module SshTask;
 class Chef_start
                                   #
   def self.command
-    #'sudo /etc/init.d/chef-client start'
-    'sudo systemctl start chef-client'
+    'sudo /etc/init.d/chef-client start'
+    #'sudo systemctl start chef-client'
   end
   #
   # commoon output from command
