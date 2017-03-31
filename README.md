@@ -19,6 +19,28 @@ Shamwow is a swiss army knife for Chef maintenance. It upgrades chef-clients thr
     --version,        print the version do
 ```
 
+## Setup 
+Shamwow can be executed from the source repo, or from a docker container. There is a Dockerfile in the root of the repo for shamwow. There's a minimal setup for a  postgres container in /dockerfiles/db. Shamwow will create a new instance of its database if it does not exist.
+
+### Docker howto:
+* Install docker on Ubuntu 16.04 [docker docs](https://store.docker.com/editions/community/docker-ce-server-ubuntu)
+  * This should work `sudo docker run hello-world`
+  * Add yourself to the docker group `sudo usermod -a -G docker jcarter`
+
+* clone the shamwow repo `git clone git@github.marchex.com:marchex/shamwow.git`
+* build the shamwow container `docker build . -t shamwow:latest`
+  * The build is a little slow because it rebuilds the gem layer each time
+* If you're using the shamwowdb container, you'll need to do the following:
+  * `cd dockerfiles/db && docker build . -t shamwowdb:latest`
+  
+Shamwow needs an ssh key for ssh activities. You can 
+
+### Postgresql on a VM/Dev machine
+* 
+
+## Logging
+Shamwow has an internal log, recording execution of activities. Use of the logging feature within the code is not 100%. The data is stored in the _shamwow_log_data_ table.
+
 ## Data sources
 
 ### Shamwow DB
@@ -80,9 +102,4 @@ to parse standard data from current NMS tools. The data captures is listed below
 ### SNMP
 Shamwow parsed some SNMP data that was hand-extracted; the feature was never completed.
 
-## Setup 
-Shamwow can be executed from the source repo, or from a docker container. There is a Dockerfile in the root of the repo for shamwow. There's a minimal setup for a  postgres container in /dockerfiles/db. Shamwow will create a new instance of its database if it does not exist.
-
-## Logging
-Shamwow has an internal log, recording execution of activities. Use of the logging feature within the code is not 100%. The data is stored in the _shamwow_log_data_ table.
 

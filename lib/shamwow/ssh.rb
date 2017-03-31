@@ -42,14 +42,14 @@ module Shamwow
       @session = Net::SSH::Multi::Session.new
       @session.on_error = handler
 
-      @session.concurrent_connections = 50
+      @session.concurrent_connections = 10
     end
 
     def add_host(host)
       # get persistant object
       _load_sshdata host
       # setup ssh session
-      @session.use host, :timeout => 30, :password => $password, :user => $user, :keys => '/home/vagrant/.ssh/id_rsa'
+      @session.use host, :timeout => 30, :password => $password, :user => $user, :keys => '/home/jcarter/.ssh/id_rsa'
     end
 
     def count_hosts

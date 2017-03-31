@@ -9,6 +9,7 @@ module Shamwow; module SshTask; class Chef_run
 
   def self.parse(host, data, db)
   begin
+      # this was used for the category, but that purpose doesn't make sense anymore
       if m = data.match(/Starting Chef Client, version ([\w\.]+)/)
         chefver = m[1]
       end
@@ -20,7 +21,7 @@ module Shamwow; module SshTask; class Chef_run
 
   end
     {
-        :category => chefver,
+        :category => 'chef_run',
         :chef_exec_output => data[0..65000],
         :chef_exec_polltime => Time.now
     }
