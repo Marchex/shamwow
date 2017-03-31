@@ -3,7 +3,7 @@ module Shamwow; module SshTask;
 class Chef_set_url_onpremises
                                   #
   def self.command
-    'sudo perl -pi -e \'s/chef_server_url\s+\"([\w\:\/\.]+)\"/chef_server_url \"https\:\/\/chef.marchex.com\/organizations\/outhouse\"/\' /etc/chef/client.rb'
+    'sudo perl -pi -e \'s/chef_server_url\s+\"([\w\:\/\.]+)\"/chef_server_url \"https\:\/\/chef.REDACTED.com\/organizations\/outhouse\"/\' /etc/chef/client.rb'
   end
   #
   # commoon output from command

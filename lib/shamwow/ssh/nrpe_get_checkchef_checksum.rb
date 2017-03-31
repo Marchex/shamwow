@@ -5,14 +5,6 @@ class Nrpe_get_checkchef_checksum
   def self.command
     '/usr/bin/md5sum /site/general-nrpe/binary/check_chef_fatal.sh && ls -l /site/general-nrpe/binary/check_chef_fatal.sh'
   end
-  #
-  # commoon output from command
-  # /usr/bin/md5sum
-  # jcarter@bumper:~$ md5sum /site/general-nrpe/binary/check_chef_fatal.sh
-  # a2e9528907946b6b071f09dd538a2424  /site/general-nrpe/binary/check_chef_fatal.sh
-  # jcarter@bumper:~$ ls -l /site/general-nrpe/binary/check_chef_fatal.sh
-  # -rwxr-xr-x 1 jcarter users 6029 Mar 29 14:00 /site/general-nrpe/binary/check_chef_fatal.sh
-  # jcarter@bumper:~$
 
   def self.parse(host, data, db)
     begin

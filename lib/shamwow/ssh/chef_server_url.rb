@@ -4,10 +4,6 @@ module Shamwow; module SshTask; class Chef_server_url
     def self.command
       'grep -i chef_server_url /etc/chef/client.rb'
     end
-    #
-    # commoon output from command
-    # jcarter@tools1:~$ grep -i chef_server_url /etc/chef/client.rb
-    # chef_server_url "https://chef.marchex.com/organizations/outhouse"
 
     def self.parse(host, data, db)
       begin

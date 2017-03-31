@@ -3,7 +3,7 @@ module Shamwow; module SshTask;
 class Nrpe_upgrade_checkchef
                                   #
   def self.command
-    'sudo scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jcarter@nosecone.sea.marchex.com:/tmp/check_chef_fatal.sh /site/general-nrpe/binary/check_chef_fatal.sh'
+    'sudo scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no REDACTED@REDACTED.com:/tmp/check_chef_fatal.sh /site/general-nrpe/binary/check_chef_fatal.sh'
   end
   #
   # commoon output from command

@@ -102,7 +102,7 @@ module Shamwow
         line = l.chomp
 
         m = nil
-        #admin-fw.som1.marchex.com: ge-0/0/2.0 deadbeefdb95 10.30.10.83  db-bil1qa-a-r1.som1.marchex.com
+
         m = line.match(/^([\w\-_\.]+):\s+([\w\/:\-\,\._]+|Port-channel\s\d+)\s+(\w+)\s+([\d\.]+)\s+([\w\.\-_]+)$/)
         if m.nil?
           p line

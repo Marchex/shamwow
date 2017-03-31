@@ -4,7 +4,7 @@ require 'rubygems'
 require 'shamwow/db'
 
 module Shamwow
-  db = Shamwow::Db.new('postgres://shamwow:shamwow@bumper.sea.marchex.com/shamwow', true)
+  db = Shamwow::Db.new('postgres://REDACTED:REDACTED@REDACTED/REDACTED', true)
   db.bootstrap_db
   patterns = {}
   products = Products.all

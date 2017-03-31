@@ -10,11 +10,11 @@ require 'shamwow/ssh'
 # (If you use this, don't forget to add pry to your Gemfile!)
 # require "pry"
 # Pry.start
-db = Shamwow::Db.new('postgres://jcarter@localhost/shamwow', true)
+db = Shamwow::Db.new('postgres://REDACTED@REDACTED/REDACTED', true)
 puts "sup"
 ssh = Shamwow::Ssh.new
 
-record = Shamwow::SshData.first(:hostname => 'cxcache4.sea1.marchex.com')
+record = Shamwow::SshData.first(:hostname => 'REDACTED')
 
 #data.each do |record|
 

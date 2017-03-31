@@ -1,55 +1,55 @@
 {
   "hostedChef": {
     "type": "chef",
-    "endpoint": "https://api.opscode.com/organizations/marchex",
+    "endpoint": "https://api.opscode.com/organizations/REDACTED",
     "client": "readonly",
     "key": "conf/readonly.pem",
     "outputdir": "./data/"
   },
   "internalDNS": {
     "type": "dns",
-    "server": "bumper.sea.marchex.com",
-    "zone": "marchex.com"
+    "server": "REDACTED.com",
+    "zone": "REDACTED.com"
   },
   "awsDNS-West2Vpc4": {
     "type": "dns",
-    "server": "ns2.aws-us-west-2-vpc4.marchex.com",
-    "zone": "aws-us-west-2-vpc4.marchex.com"
+    "server": "REDACTED.com",
+    "zone": "REDACTED.com"
   },
   "awsDNS-East1Vpc3": {
     "type": "dns",
-    "server": "ns1.aws-us-east-1-vpc3.marchex.com",
-    "zone": "aws-us-east-1-vpc3.marchex.com"
+    "server": "REDACTED.com",
+    "zone": "REDACTED.com"
   },
   "awsDNS-East1Vpc1": {
     "type": "dns",
-    "server": "ns1.aws-us-east-1-vpc1.marchex.com",
-    "zone": "aws-us-east-1-vpc1.marchex.com"
+    "server": "REDACTED.com",
+    "zone": "REDACTED.com"
   },
   "awsDNS-West2Vpc2": {
     "type": "dns",
-    "server": "ns2.aws-us-west-2-vpc2.marchex.com",
-    "zone": "aws-us-west-2-vpc2.marchex.com"
+    "server": "REDACTED.com",
+    "zone": "REDACTED.com"
   },
   "netools-L1": {
     "type": "netools",
     "layer": "1",
-    "endpoint": "http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link"
+    "endpoint": "http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/01.phy-link"
   },
   "netools-L2": {
     "type": "netools",
     "layer": "2",
-    "endpoint": "http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge"
+    "endpoint": "http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge"
   },
   "netools-L3": {
     "type": "netools",
     "layer": "3",
-    "endpoint": "http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr"
+    "endpoint": "http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr"
   },
   "netools-snmp": {
     "type": "netools",
     "layer": "snmp",
-    "endpoint": "http://bluestreak.sea.marchex.com/netools-ui/data/netdump_1460422844.json"
+    "endpoint": "http://REDACTED.com/netools-ui/data/netdump_1460422844.json"
   }
 
 }
