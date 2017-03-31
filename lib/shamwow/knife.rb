@@ -57,15 +57,7 @@ module Shamwow
         ssh.exec!("knife search node 'fqdn:*' -a cookbooks -a roles -a run_list -Fj")
       end
     end
-    # {
-    #     "results": 1,
-    #     "rows": [
-    #       {  <--- hostobj
-    #           "pulleyserver1.sea1.marchex.com": {
-    #             "cookbooks": {
-    #                 "apt": {
-    #                   "version": "1.9.0"
-    #                 }
+
     def parse_attributes(output)
       nowtime = Time.now
       data = JSON.parse(output)

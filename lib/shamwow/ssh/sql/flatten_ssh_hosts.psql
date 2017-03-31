@@ -1,4 +1,4 @@
 select *
 from shamwow_sshdata_exec_outputs o
   join shamwow_ssh_data s on s.id = o.ssh_data_id
-where s.hostname = 'vm.som1.marchex.com'
+where s.hostname = 'vm.REDACTED.REDACTED.com'

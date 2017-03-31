@@ -1,5 +1,5 @@
 # Shamwow
-Shamwow is a swiss army knife for Chef maintenance. It upgrades chef-clients through SSH, running the chef-client both before and after, capturing all the output and storing it in a postgres db.   It also pulls data from Chef, Dns, SSH, and Marchex's homegrown network tools and puts it into a postgres database. 
+Shamwow is a swiss army knife for Chef maintenance. It upgrades chef-clients through SSH, running the chef-client both before and after, capturing all the output and storing it in a postgres db.   It also pulls data from Chef, Dns, SSH, and REDACTED's homegrown network tools and puts it into a postgres database. 
 
 ## Options
 ```
@@ -25,9 +25,9 @@ Shamwow can be executed from the source repo, or from a docker container. There 
 ### Docker howto:
 * Install docker on Ubuntu 16.04 [docker docs](https://store.docker.com/editions/community/docker-ce-server-ubuntu)
   * This should work `sudo docker run hello-world`
-  * Add yourself to the docker group `sudo usermod -a -G docker jcarter`
+  * Add yourself to the docker group `sudo usermod -a -G docker REDACTED`
 
-* clone the shamwow repo `git clone git@github.marchex.com:marchex/shamwow.git`
+* clone the shamwow repo `git clone git@REDACTED.com:REDACTED/REDACTED.git`
 * build the shamwow container `docker build . -t shamwow:latest`
   * The build is a little slow because it rebuilds the gem layer each time
 * If you're using the shamwowdb container, you'll need to do the following:
@@ -70,7 +70,7 @@ There is also an _shamwow_ssh_exec_data_ table that stores output from multiple 
 * upgrade_check_chef_fatal
 
 ### DNS
-Shamwow SSHs to a bastion host and performs a `dig axfr marchex.com`. The data is stored in _shamwow_dns_data_ table.  The list of servers polled is currecntly hardcoded in the `lib/shamwow.rb` file. 
+Shamwow SSHs to a bastion host and performs a `dig axfr REDACTED.com`. The data is stored in _shamwow_dns_data_ table.  The list of servers polled is currecntly hardcoded in the `lib/shamwow.rb` file. 
 
 ### Chef Server
 Shamwow uses knife to extract and normalize node data for SQL-based analysis. It pulls the cookbooks,

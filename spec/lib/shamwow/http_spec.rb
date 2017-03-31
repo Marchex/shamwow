@@ -16,10 +16,10 @@ describe 'Http' do
     allow(Time).to receive(:now).and_return(@time_now)
     #
     # # Act
-    result = h.remove_header("[ETHSWITCH]: [LOCALINTERFACE] [LINKSTATE] [DESCRIPTION]\t\t11638 uniqe records\na01-tor-a.som1.marchex.com: mgt up MGT \n")
+    result = h.remove_header("[ETHSWITCH]: [LOCALINTERFACE] [LINKSTATE] [DESCRIPTION]\t\t11638 uniqe records\REDACTED.com: mgt up MGT \n")
     #
     # Assert
-    expect(result).to eq("a01-tor-a.som1.marchex.com: mgt up MGT \n")
+    expect(result).to eq("REDACTED.com: mgt up MGT \n")
   end
 
   it 'should parse netools layer1 data' do
@@ -29,18 +29,18 @@ describe 'Http' do
     h = Shamwow::Http.new(db)
     #
     # act
-    result = h.parse_layer1("a01-tor-a.som1.marchex.com: mgt up MGT
-a01-tor-a.som1.marchex.com: port10 up r630a0101_s2_data
-a01-tor-a.som1.marchex.com: port11 up r630a0102_s1_stor
-as1-a01-admin.som1.marchex.com: gi0/10 up r630a0101_ipmi
-as1-a01-admin.som1.marchex.com: gi0/10 up
-phl02as04a.phl1.marchex.com: gi0/25 down RSPAN destination interface : Link to phl02asRSPAN
-sad01cr01-01.sad.marchex.com: gi10/3 up *UP-LINK Spectrum:sea02cs18a:Gi0/13:CircuitID-SID-4216
-sad01cs02.sad.marchex.com: gi3/25 up \"to br2.sea1 ge-1/3/9 via pp15 for zayo e-wan vlan 937 SOM1 to SAD\"
-sea02cs18a.sea.marchex.com: gi0/13 up *UP-LINK SPECTRUM:sad01cr01-01:Gi10 /3:Cir-ID-SID-4216
-sea02cs18a.sea.marchex.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
-sea02cs18b.sea.marchex.com: gi0/13 up *UP-LINK INTEGRA:sad01cr01-02:Gi10 /2:Cir-ID:ELKFED758894INTG
-sea02cs18b.sea.marchex.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
+    result = h.parse_layer1("REDACTED.com: mgt up MGT
+REDACTED.com: port10 up r630a0101_s2_data
+REDACTED.com: port11 up r630a0102_s1_stor
+REDACTED.com: gi0/10 up r630a0101_ipmi
+REDACTED.com: gi0/10 up
+REDACTED.com: gi0/25 down RSPAN destination interface : Link to phl02asRSPAN
+REDACTED.com: gi10/3 up *UP-LINK Spectrum:sea02cs18a:Gi0/13:CircuitID-SID-4216
+REDACTED.com: gi3/25 up \"to br2.sea1 ge-1/3/9 via pp15 for zayo e-wan vlan 937 SOM1 to SAD\"
+REDACTED.com: gi0/13 up *UP-LINK SPECTRUM:sad01cr01-01:Gi10 /3:Cir-ID-SID-4216
+REDACTED.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
+REDACTED.com: gi0/13 up *UP-LINK INTEGRA:sad01cr01-02:Gi10 /2:Cir-ID:ELKFED758894INTG
+REDACTED.com: v690 up sea02.infr_v690_10.104.254.0-24_network-management
 ")
     #
     # asset
@@ -67,10 +67,10 @@ sea02cs18b.sea.marchex.com: v690 up sea02.infr_v690_10.104.254.0-24_network-mana
     #
     # act
     result = h.parse_layer2(h.remove_header("[ETHSWITCH]: [LOCALINTERFACE] [MACADDRESS] v[VLANID] 		7101 uniqe records
-a01-tor-a.som1.marchex.com: port10 5254005df409 v3000
-sad01cr01-01.sad.marchex.com: ip,assigned 0019b9c75cb5 v3013
-sad01cr01-01.sad.marchex.com: ip,assigned 00225560ef01 v40
-a01-tor-a.som1.marchex.com: port10 525400854499 v3000
+REDACTED.com: port10 5254005df409 v3000
+REDACTED.com: ip,assigned 0019b9c75cb5 v3013
+REDACTED.com: ip,assigned 00225560ef01 v40
+REDACTED.com: port10 525400854499 v3000
 "))
     #
     # asset

@@ -93,15 +93,15 @@ module Shamwow
   # polls dns servers for records
   if opts.dns?
     dns = Shamwow::Dns.new(db)
-    out = dns.transfer_zone('bumper.sea.marchex.com', 'marchex.com')
+    out = dns.transfer_zone('REDACTED.com', 'REDACTED.com')
     dns.update_records(out)
-    out = dns.transfer_zone('ns2.aws-us-west-2-vpc4.marchex.com', 'aws-us-west-2-vpc4.marchex.com')
+    out = dns.transfer_zone('REDACTED.com', 'REDACTED.com')
     dns.update_records(out)
-    out = dns.transfer_zone('ns1.aws-us-east-1-vpc3.marchex.com', 'aws-us-east-1-vpc3.marchex.com')
+    out = dns.transfer_zone('REDACTED.com', 'REDACTEDcom')
     dns.update_records(out)
-    out = dns.transfer_zone('ns1.aws-us-east-1-vpc1.marchex.com', 'aws-us-east-1-vpc1.marchex.com')
+    out = dns.transfer_zone('REDACTED.com', 'REDACTED.com')
     dns.update_records(out)
-    out = dns.transfer_zone('ns2.aws-us-west-2-vpc2.marchex.com', 'aws-us-west-2-vpc2.marchex.com')
+    out = dns.transfer_zone('REDACTED.com', 'REDACTED.com')
     dns.update_records(out)
     dns.save_records
     dns.parse_all_records
@@ -129,23 +129,23 @@ module Shamwow
     puts "#{Time.now}-Shamwow::Ssh: Done"
   end
 
-  # this polls Marchex's custom network management tool (RIP Erwin!)
+  # this polls REDACTED's custom network management tool (RIP Erwin!)
   if opts.net?
     h = Shamwow::Http.new(db)
-    layer1 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
+    layer1 = h.get('http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/01.phy-link')
     parsed = h.parse_layer1(h.remove_header(layer1))
 
     puts "#{Time.now}-Shamwow::Http: Layer 1 record count: #{parsed.count}"
     h.save_all_layer1
     h.expire_l1_records($expire_time)
     #
-    layer2 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
+    layer2 = h.get('http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/02.mac-edge')
     parsed = h.parse_layer2(h.remove_header(layer2))
     puts "#{Time.now}-Shamwow::Http: Layer 2 record count: #{parsed.count}"
     h.save_all_layer2
     h.expire_l2_records($expire_time)
     #
-    layer3 = h.get('http://netools.sad.marchex.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
+    layer3 = h.get('http://REDACTED.com/report/gni/dyn/data/01.proc-summaries/03.arp-tabl.v2-ptr')
     parsed = h.parse_layer3(h.remove_header(layer3))
     puts "#{Time.now}-Shamwow::Http: Layer 3 record count: #{parsed.count}"
     h.save_all_layer3
@@ -156,9 +156,9 @@ module Shamwow
   if opts.knife?
     k = Shamwow::Knife.new(db)
     k.load_data
-    out = k.get_status('bumper.sea.marchex.com')
+    out = k.get_status('REDACTED.com')
     k.parse_status(out)
-    out = k.get_attributes('bumper.sea.marchex.com')
+    out = k.get_attributes('REDACTED.com')
     k.parse_attributes(out)
     k.expire_records($expire_time)
   end

@@ -21,10 +21,7 @@ module Shamwow
         output
       end
     end
-    # "m1._domainkey.marchex.com. 3600	IN	TXT	"v=DKIM1\; k=rsa\; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDFUlNZvtGDlIGDRtzyRQydM9yRInD5YMx86QpgZ3v7pT+Mx4tGbjUxY41TXbsp7UH9hTREaKKGQKNM/B3FzcFVv4zafZ09lUaXcbSdtD70iXyH0OXEGXLZI5gG0ZwjK5ptgQ18d+pUP9s8xMkJnZlubTk9MLvQnv3ZBzoL9FHFDQIDAQAB"
-    # "_sipfederationtls._tcp.marchex.com. 3600 IN SRV	100 1 5061 sipfed.online.lync.com."
-    # "arc-landingpages.marchex.com. 3600 IN	CNAME	masclp.som1.marchex.com."
-    # "*.www1.devint.marchex.com. 86400 IN	A	10.108.249.16"
+
     def update_records(output)
       nowtime = Time.now
       output.each_line do |l|

@@ -7,14 +7,14 @@ Gem::Specification.new do |spec|
   spec.name          = "shamwow"
   spec.version       = Shamwow::VERSION
   spec.authors       = ["Jimmy Carter"]
-  spec.email         = ["jcarter@marchex.com"]
+  spec.email         = ["REDACTED@REDACTED.com"]
 
   if spec.respond_to?(:metadata)
     spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
   end
 
-  spec.summary       = %q{Marchex adhoc systems information aggregator}
-  spec.homepage      = 'https://github.marchex.com/marchex/shamwow'
+  spec.summary       = %q{REDACTED adhoc systems information aggregator}
+  spec.homepage      = 'https://REDACTED.com/REDACTED/shamwow'
   spec.license       = 'MIT'
 
   spec.require_paths = ["lib"]

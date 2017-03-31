@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Tools Team <tools-team@marchex.com>
+MAINTAINER Tools Team <REDACTED@REDACTED.com>
 RUN apt-get update && \
 
     apt-get install -y build-essential && \

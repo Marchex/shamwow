@@ -2,17 +2,17 @@ CREATE EXTENSION mysql_fdw;
 
 CREATE SERVER soc_mysql
      FOREIGN DATA WRAPPER mysql_fdw
-     OPTIONS (host '10.108.11.57', port '3306');
+     OPTIONS (host 'REDACTED', port '3306');
 
-CREATE USER MAPPING FOR jcarter
+CREATE USER MAPPING FOR REDACTED
 SERVER soc_mysql
-OPTIONS (username 'jcarter', password 'PASSWORD');
+OPTIONS (username 'REDACTED', password 'PASSWORD');
 
 CREATE FOREIGN TABLE zenbot_products(
      product_group varchar(50),
      host_groups varchar(2000))
 SERVER soc_mysql
-     OPTIONS (dbname 'soctools', table_name 'zenbot_products');
+     OPTIONS (dbname 'REDACTED', table_name 'REDACTED');
 
 select * from zenbot_products;
 
